@@ -67,7 +67,7 @@
 
 \begin{document}
 
-\title{Demistificando o Cartola FC}
+\title{Desmistificando o Cartola FC}
 
 \author
 {
@@ -92,25 +92,25 @@ O futebol é um esporte com diversos  fãs ao redor do mundo e com uma
 imprevisibilidade muito grande, supreendendo os torcedores. Um exemplo
 recente foi  a Copa  do Mundo de  2018 no qual  o campeão  do torneio
 anterior não conseguiu passar nem da primeira fase, perdendo 2x0 para
-Coreia do Sul apenas 57\ts{a}  colocada no ranking fifa \cite{fifa}, e
+Coreia do Sul apenas 57\ts{a}  colocada no ranking FIFA \cite{fifa}, e
 a presença  Croácia na  final. Ainda nesta  Copa do  Mundo; diversos
 bancos, incluindo  o \tit{Goldman Sachs}, utilizaram  este evento para
 demonstrar a capacidade de  prever eventos complexos \cite{news}, eles
-chegaram  a rodar  milhões  variações do  torneio  para calcular  a
+chegaram a  rodar milhões de  variações do torneio para  calcular a
 probabilidade de cada time avançar na competição e mesmo assim não
-obtiveram um resulta satisfatório.
+obtiveram um resultado satisfatório.
 
 Os fãs  de futebol  também participam  da "brincadeira"  através do
 Cartola FC, um  "fantasy game" sobre este esporte. O  Cartola FC é um
 jogo online fictício no qual você pode montar seu time com jogadores
 reais da Série A do Campeonato  Brasileiro. No jogo é preciso montar
 seu time, escolhendo  técnico, jogadores e o esquema  tático. Com as
-moedas do  jogo, inicialmente  \$ 100.00, é  possível escalar  o seu
-time,  comprando  e  vendendo  jogadores  a  cada  rodada,  importante
-adicionar  que a  (des)valorização  do jogador  acontece após  cada
-rodada  e leva  em consideração  a pontuação  do atleta,  além da
-média  dos  outros jogadores.  A  escalação  deve ser  feita  antes
-do  primeiro jogo  da  rodada.  A cada  rodada,  os jogadores  recebem
+moedas  do  jogo, inicialmente  C\$  100.00  cartoletas, é  possível
+escalar  o seu  time, comprando  e vendendo  jogadores a  cada rodada,
+importante  adicionar que  a  (des)valorização  do jogador  acontece
+após cada  rodada e leva  em consideração a pontuação  do atleta,
+além da  média dos  outros jogadores. A  escalação deve  ser feita
+antes do  primeiro jogo da rodada  e a cada uma,  os jogadores recebem
 pontuações  baseadas  em suas  ações  durante  as partidas,  e.g.,
 gols feitos,  chutes defendidos,  bolas roubadas, faltas  cometidas ou
 sofridas, cartões  recebidos, entre outras. As  ações dos jogadores
@@ -123,16 +123,15 @@ pontos  ao final  de  todas  as rodadas  (média  de  67.4 pontos  por
 rodada),  competindo   contra  4  milhões  de   times  escalados.  Em
 \cite{viscondiaplicacao}, um sistema  de previsão aplicando técnicas
 de  \tit{machine  learning}  foi  proposto  para  conseguir  a  melhor
-escalação do time  para a próxima rodada,  entretanto os resultados
-obtidos não permitiria  vencer o torneio. Além  disso, este trabalho
-fez uma análise  dos dados, explanando algumas  observações como: o
-esquema  tático tem  uma  leve  variação, sendo  o  4-4-2 a  melhor
-formação.
+escalação do time a em cada rodada, entretanto os resultados obtidos
+não permitiria vencer  o torneio. Além disso, este  trabalho fez uma
+análise dos  dados, explanando algumas observações  como: o esquema
+tático tem uma leve variação, sendo o 4-4-2 a melhor formação.
 
-O  projeto  proposto propõe  um  modelo  preditivo para  maximizar  a
-pontuação  do Cartola  FC, informando  a cada  rodada do  jogo quais
-parâmetros, escolher  os jogadores  a cada  rodada, que  deverão ser
-utilizado para o torneio de 2018.
+O projeto propõe um modelo  preditivo para maximizar a pontuação do
+Cartola FC, informando  a cada rodada do jogo  quais parâmetros devem
+ser utilizados, ou seja, escolher  os jogadores/técnico a cada rodada
+para o torneio de 2018.
 
 \section{Base de Dados}
 
@@ -169,8 +168,8 @@ Passe errado          & -0.3 pts & Falta cometida       & -0.5 pts \\
 \end{table}
 % \ts{1}scots exclusivos de goleiro.
 
-Abaixo, os itens que complementam o arquivo \tit{csv} com a lista
-de Scouts, sendo atualizado a cada rodada:
+Abaixo, os  itens abaixo  complementam a \rtab{model}  com a  lista de
+Scouts, também sendo atualizado a cada rodada:
 
 \begin{itemize}
 

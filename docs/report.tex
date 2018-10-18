@@ -101,43 +101,42 @@ foi  feita  na  linguagem  Python  com o  auxílio  da  biblioteca  do
 
 \section{Limpeza dos Dados}
 
-A  primeira etapa  realizada em  \cite{git_cartola} para  implmentar o
-modelo de predição  foi analisar os dados do fornecidos  pela API do
+A primeira  etapa realizada  em \cite{git_cartola} para  implementar o
+modelo  de predição  foi analisar  os dados  fornecidos pela  API do
 cartola e fazer as limpezas  necessárias para criar amostras corretas
 e relevantes para o preditor.  Analisando os dados previamente, alguns
 problemas foram detectados:
 
 \begin{itemize}
-  \item Jogadores com todos os scouts NANs.
-  \item Jogadores com a coluna 'ClubeID' = NAN.
-  \item Jogadores com a coluna 'Status' = NAN.
-  \item Jogadores com a pontuação não equivalente a soma ponderada dos scouts.
+\item Jogadores com todos os scouts NANs.
+\item Jogadores com a coluna 'ClubeID' = NAN.
+\item Jogadores com a coluna 'Status' = NAN.
+\item Jogadores com a pontuação não equivalente a soma ponderada dos scouts.
 \end{itemize}
 
 A  coluna atletas.clube\_id  tem campos  repetidos e  divergentes: por
 exemplo, todos os Atléticos (MG, PR, e GO) são ATL. Além disso, há
 jogadores  com  siglas diferentes  das  equipes  que eles  jogam  (por
-exemplo, Maicosuel [id: 37851]) A coluna 'athletes.atletas.scout' não
-é informativa  Os scouts de  2015 dos jogadores são  cumulativos: ou
-seja,  os scouts  dos  jogadores  vão sendo  somados  a cada  rodada.
+exemplo,  Maicosuel [id:  37851]).  A coluna  'athletes.atletas.scout'
+não é informativa. Os scouts de 2015 dos jogadores são cumulativos,
+ou seja,  os scouts dos  jogadores vão  sendo somados a  cada rodada.
 Entretanto, a pontuação não é. Isso também causa o repetimento de
 dados.
 
 \subsection{Atualização dos scouts cumulativos de 2015}
 
 Como  dito  anteriomente, os  dados  sobre  os  scouts de  2015  foram
-disponibilizados de  maneira cumulativa pela  , ou seja, os  scouts de
-uma rodada são  adicionados aos scouts anteriores a  cada nova rodada
-que  um  jogador  participa.  Portanto,  foi  necessário  tirar  essa
-acumulação para cada  jogador, de que maneira  que a representação
-dos dados ficasse coerente.
+disponibilizados  de maneira  cumulativa pela  fornecidos pela  API do
+cartola, ou seja, os scouts de  uma rodada são adicionados aos scouts
+anteriores a cada nova rodada  que um jogador participa. Portanto, foi
+necessário tirar essa acumulação para  cada jogador, de maneira que
+a representação dos dados ficasse coerente.
 
 Para isso, dada  uma rodada específica, os scouts de  um jogador são
 subtraídos  do máximo  dos scouts  de todas  as rodadas  anteriores.
-Repare que  assim há chance  do scout Jogo  Sem Sofrer Gols  (SG) ser
-negativo se  o jogador não sofre  gols na rodada anterior  e sofre na
+Repare que assim  há chance do scout 'Jogo Sem  Sofrer Gols (SG)' ser
+negativo se o jogador não sofrer  gols na rodada anterior e sofrer na
 rodada atual. Quando isso acontece, esse scout é atualizado.
-
 
 \subsection{Verificação da pontuação com os scouts}
 
@@ -159,10 +158,9 @@ modelo, por isso foram removidas.
 
 \section{Criação das Amostras}
 
-Uma  vez  a base  de  dados  limpa,  o  próximo passo  foi  transfor.
-Agora, vamos  pegar os dados  que limpamos e transformá-los  em dados
-utilizáveis para  criação dos  modelos. Para  isso, foi  efetuar as
-seguintes operações:
+Uma vez  a base de  dados limpa, o  próximo passo foi  transformar os
+dados limpos  em dados utilizáveis  para criação dos  modelos. Para
+isso, foi efetuar as seguintes operações:
 
 \begin{itemize}
 
@@ -178,6 +176,7 @@ as  colunas  Posicao,  ClubeID,  opponent e  casa  serão  convertidas
 numéricos.
 
 \end{itemize}
+
 
 \section{treinamento do Modelo}
 
@@ -219,12 +218,14 @@ rede  será  treinada visando  minimizar  a  Root Mean  Squared  Error
 
 \begin{figure}
   \includegraphics[width=\linewidth]{loss_function.png}
-  \caption{A boat.}
+  \caption{Loss Function.}
   \label{fig:boat1}
 \end{figure}
 
 \section{Propostas para melhorar o Baseline.}
-A principio, cogitamos utilizar as seguintes estratégias para melhorar o baseline:
+
+A  principio,  cogitamos  utilizar   as  seguintes  estratégias  para
+melhorar o baseline:
 
 \begin{enumerate}
 
@@ -244,6 +245,9 @@ rodadas.  Isso deve-se  ao fato  de  que, pela  experiencia que  temos
 assistindo futebol, o desempenho dos jogadores oscila de acordo com um
 determinado histórico. Faremos essa modificação na esperança que o
 modelo reconheça esse padrão.
+
+\item  Utilizar a  estratégia  conhecida como  one-hot encoding  para
+representar as features categóricas.
 
 \end{enumerate}
 

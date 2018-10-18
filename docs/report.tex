@@ -94,7 +94,7 @@ Como baseline vamos utilizar a implementação e o tratamento dos dados disponí
 
 \section{Limpeza dos Dados}
 
-A primeira etapa realizada em \cite{git_cartola} para implmentar o modelo de predição foi analisar os dados do fornecidos pela API do cartola e fazer as limpezas necessárias para criar amostras corretas e relevantes para o preditor. Analisando os dados previamente, alguns problemas foram detectados:
+A primeira etapa realizada em \cite{git_cartola} para implementar o modelo de predição foi analisar os dados fornecidos pela API do cartola e fazer as limpezas necessárias para criar amostras corretas e relevantes para o preditor. Analisando os dados previamente, alguns problemas foram detectados:
 
 \begin{itemize}
 	\item Jogadores com todos os scouts NANs.
@@ -105,12 +105,12 @@ A primeira etapa realizada em \cite{git_cartola} para implmentar o modelo de pre
 
 A coluna  atletas.clube\_id tem campos repetidos e divergentes: por exemplo, todos os Atléticos (MG, PR, e GO) são ATL. Além disso, há jogadores com siglas diferentes das equipes que eles jogam (por exemplo, Maicosuel [id: 37851]).
 A coluna 'athletes.atletas.scout' não é informativa.
-Os scouts de 2015 dos jogadores são cumulativos: ou seja, os scouts dos jogadores vão sendo somados a cada rodada. Entretanto, a pontuação não é. Isso também causa o repetimento de dados.
+Os scouts de 2015 dos jogadores são cumulativos, ou seja, os scouts dos jogadores vão sendo somados a cada rodada. Entretanto, a pontuação não é. Isso também causa o repetimento de dados.
 
 \subsection{Atualização dos scouts cumulativos de 2015}
-Como dito anteriomente, os dados sobre os scouts de 2015 foram disponibilizados de maneira cumulativa pela , ou seja, os scouts de uma rodada são adicionados aos scouts anteriores a cada nova rodada que um jogador participa. Portanto, foi necessário tirar essa acumulação para cada jogador, de que maneira que a representação dos dados ficasse coerente.
+Como dito anteriomente, os dados sobre os scouts de 2015 foram disponibilizados de maneira cumulativa pela fornecidos pela API do cartola, ou seja, os scouts de uma rodada são adicionados aos scouts anteriores a cada nova rodada que um jogador participa. Portanto, foi necessário tirar essa acumulação para cada jogador, de maneira que a representação dos dados ficasse coerente.
 
-Para isso, dada uma rodada específica, os scouts de um jogador são subtraídos do máximo dos scouts de todas as rodadas anteriores. Repare que assim há chance do scout Jogo Sem Sofrer Gols (SG) ser negativo se o jogador não sofre gols na rodada anterior e sofre na rodada atual. Quando isso acontece, esse scout é atualizado.
+Para isso, dada uma rodada específica, os scouts de um jogador são subtraídos do máximo dos scouts de todas as rodadas anteriores. Repare que assim há chance do scout 'Jogo Sem Sofrer Gols (SG)' ser negativo se o jogador não sofrer gols na rodada anterior e sofrer na rodada atual. Quando isso acontece, esse scout é atualizado.
 
 
 \subsection{Verificação da pontuação com os scouts}
@@ -125,8 +125,7 @@ A última operação realizada para limpar a base de dados foi apagar as linhas 
 
 \section{Criação das Amostras}
 
-Uma vez a base de dados limpa, o próximo passo foi transfor
-Agora, vamos pegar os dados que limpamos e transformá-los em dados utilizáveis para criação dos modelos. Para isso, foi efetuar as seguintes operações:
+Uma vez a base de dados limpa, o próximo passo foi transformar os dados limpos em dados utilizáveis para criação dos modelos. Para isso, foi efetuar as seguintes operações:
 \begin{itemize}
 	\item \textbf{Selecionar somente as colunas de interesse:} colunas como atletas.nome, atletas.foto, etc não são relevantes para criação do modelo. No entanto, colunas como o AtletaID e atletas.apelido, mesmo que não utilizadas para treinamento do modelo, são importante para avaliar o resultado e, portanto, também serão consideradas.
 
@@ -162,7 +161,7 @@ Uma vez que trata-se de um problema de regressão, a função de ativação da s
 
 \begin{figure}
   \includegraphics[width=\linewidth]{loss_function.png}
-  \caption{A boat.}
+  \caption{Loss Function.}
   \label{fig:boat1}
 \end{figure}
 
@@ -172,6 +171,7 @@ A principio, cogitamos utilizar as seguintes estratégias para melhorar o baseli
 \begin{enumerate}
 	\item Utilização do \textit{Random Forest}. Esse modelo consiste em um método de aprendizado conjunto para classificação, regressão e outras tarefas, que operam construindo uma multiplicidade de árvores de decisão no momento do treinamento e gerando a classe que é o modo das classes ou previsão média das árvores individuais. Essa proposta foi discutida em \url{https://github.com/henriquepgomide/caRtola/issues/33}, por esse motivo resolvemos testá-la para avaliar os resultados.
 	\item Acreditamos também que podemos melhorar os resultados modificando a rede para receber como entrada não só apenas os dados de uma terminada rodada, mas sim um histórico das últimas \textit{n} rodadas. Isso deve-se ao fato de que, pela experiencia que temos assistindo futebol, o desempenho dos jogadores oscila de acordo com um determinado histórico. Faremos essa modificação na esperança que o modelo reconheça esse padrão.
+	\item Utilizar a estratégia conhecida como one-hot encoding para representar as features categóricas.
 \end{enumerate}
 
 

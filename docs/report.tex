@@ -101,20 +101,22 @@ foi  feita  na  linguagem  Python  com o  auxílio  da  biblioteca  do
 
 \section{Limpeza dos Dados}
 
-A primeira  etapa realizada  em \cite{git_cartola} para  implementar o
-modelo  de predição  foi analisar  os dados  fornecidos pela  API do
-cartola e fazer as limpezas  necessárias para criar amostras corretas
-e relevantes para o preditor.  Analisando os dados previamente, alguns
-problemas foram detectados:
+A primeira  etapa realizada  para implementar  o modelo  de predição
+foi  analisar os  dados fornecidos  pela  API do  cartola, fazendo  as
+limpezas necessárias para criar amostras corretas e relevantes para o
+preditor. Os  dados devem  continuar consistente  após a  limpeza dos
+dados, ou  seja, nenhuma  coluna poderá  ser adicionada,  alterada ou
+removida. Após uma análise prévia dos dados, alguns problemas foram
+detectados nas informações dos jogadores:
 
 \begin{itemize}
-\item Jogadores com todos os scouts NANs.
-\item Jogadores com a coluna 'ClubeID' = NAN.
-\item Jogadores com a coluna 'Status' = NAN.
-\item Jogadores com a pontuação não equivalente a soma ponderada dos scouts.
+  \item todos os scouts com valor NaN (\tit{not a number}).
+  \item coluna 'ClubeID' com valor NaN.
+  \item coluna 'Status' com valor NaN.
+  \item pontuação não equivalente a soma ponderada dos scouts.
 \end{itemize}
 
-A  coluna atletas.clube\_id  tem campos  repetidos e  divergentes: por
+A coluna  'atletas.clube\_id' tem campos repetidos  e divergentes: por
 exemplo, todos os Atléticos (MG, PR, e GO) são ATL. Além disso, há
 jogadores  com  siglas diferentes  das  equipes  que eles  jogam  (por
 exemplo,  Maicosuel [id:  37851]).  A coluna  'athletes.atletas.scout'
@@ -122,6 +124,12 @@ não é informativa. Os scouts de 2015 dos jogadores são cumulativos,
 ou seja,  os scouts dos  jogadores vão  sendo somados a  cada rodada.
 Entretanto, a pontuação não é. Isso também causa o repetimento de
 dados.
+
+As linhas que possuem as inconsistências citadas acima são removidas
+ou  atualizadas. Além  destas  modificações,  outras remoções  de
+dados  irrelevantes são  realizadas, por  exemplo jogadores  que não
+participaram de  nenhuma rodada, técnicos e  jogadores sem posição,
+jogadores sem nome, entre outros.
 
 \subsection{Atualização dos scouts cumulativos de 2015}
 
@@ -149,12 +157,11 @@ removidos.
 \subsection{Remoção das linhas duplicadas}
 
 A última operação realizada para limpar  a base de dados foi apagar
-as  linhas repetidas.  A  existencia de  linhas  repetidas deve-se  ao
+as  linhas repetidas.  A existência  de linhas  repetidas deve-se  ao
 fato  de que  a partir  da primeira  participação de  um jogador  no
 campeonato, ele  aparece em todas  as rodadas subsequentes,  mesmo que
 não tenha jogado.  As entradas redundantes não  são necessárias ao
 modelo, por isso foram removidas.
-
 
 \section{Criação das Amostras}
 

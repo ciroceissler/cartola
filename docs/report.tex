@@ -10,6 +10,7 @@
 \usepackage[latin1,utf8]{inputenc}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{url}
 
 % Commands to help in references
 \newcommand{\rchap}[1]{Chapter~\ref{chap:#1}}
@@ -67,7 +68,7 @@
 
 \begin{document}
 
-\title{Desmistificando o Cartola FC}
+\title{Desmistificando o Cartola FC: O Baseline}
 
 \author
 {
@@ -86,108 +87,95 @@
 
 \maketitle
 
-\section{Introduction}
+\section{Introdução}
 
-O futebol é um esporte com diversos  fãs ao redor do mundo e com uma
-imprevisibilidade muito grande, supreendendo os torcedores. Um exemplo
-recente foi  a Copa  do Mundo de  2018 no qual  o campeão  do torneio
-anterior não conseguiu passar nem da primeira fase, perdendo 2x0 para
-Coreia do Sul apenas 57\ts{a}  colocada no ranking FIFA \cite{fifa}, e
-a presença  Croácia na  final. Ainda nesta  Copa do  Mundo; diversos
-bancos, incluindo  o \tit{Goldman Sachs}, utilizaram  este evento para
-demonstrar a capacidade de  prever eventos complexos \cite{news}, eles
-chegaram a  rodar milhões de  variações do torneio para  calcular a
-probabilidade de cada time avançar na competição e mesmo assim não
-obtiveram um resultado satisfatório.
+Como baseline vamos utilizar a implementação e o tratamento dos dados disponível em \cite{git_cartola}.
 
-Os fãs  de futebol  também participam  da "brincadeira"  através do
-Cartola FC, um  "fantasy game" sobre este esporte. O  Cartola FC é um
-jogo online fictício no qual você pode montar seu time com jogadores
-reais da Série A do Campeonato  Brasileiro. No jogo é preciso montar
-seu time, escolhendo  técnico, jogadores e o esquema  tático. Com as
-moedas  do  jogo, inicialmente  C\$  100.00  cartoletas, é  possível
-escalar  o seu  time, comprando  e vendendo  jogadores a  cada rodada,
-importante  adicionar que  a  (des)valorização  do jogador  acontece
-após cada  rodada e leva  em consideração a pontuação  do atleta,
-além da  média dos  outros jogadores. A  escalação deve  ser feita
-antes do  primeiro jogo da rodada  e a cada uma,  os jogadores recebem
-pontuações  baseadas  em suas  ações  durante  as partidas,  e.g.,
-gols feitos,  chutes defendidos,  bolas roubadas, faltas  cometidas ou
-sofridas, cartões  recebidos, entre outras. As  ações dos jogadores
-em campo são  chamadas de Scouts e são elas  que geram a pontuação
-do time. Por fim, o Capitão tem sua pontuação duplicada e não pode
-ser o técnico.
 
-No  Cartola  FC   de  2017,  o  jogador   vencedor  totalizou  2460.19
-pontos  ao final  de  todas  as rodadas  (média  de  67.4 pontos  por
-rodada),  competindo   contra  4  milhões  de   times  escalados.  Em
-\cite{viscondiaplicacao}, um sistema  de previsão aplicando técnicas
-de  \tit{machine  learning}  foi  proposto  para  conseguir  a  melhor
-escalação do time a em cada rodada, entretanto os resultados obtidos
-não permitiria vencer  o torneio. Além disso, este  trabalho fez uma
-análise dos  dados, explanando algumas observações  como: o esquema
-tático tem uma leve variação, sendo o 4-4-2 a melhor formação.
+\section{Limpeza dos Dados}
 
-O projeto propõe um modelo  preditivo para maximizar a pontuação do
-Cartola FC, informando  a cada rodada do jogo  quais parâmetros devem
-ser utilizados, ou seja, escolher  os jogadores/técnico a cada rodada
-para o torneio de 2018.
-
-\section{Base de Dados}
-
-A base de  dados \cite{git_cartola} contém as  informações sobre os
-campeonatos  de 2014  a  2017 consolidadas  e  serão utilizadas  para
-aprendizado do nosso  modelo, os dados sobre 2018  são adicionadas ao
-término de cada rodada. No  repositório, cada campeonato é dividido
-em cinco arquivos do formato \tit{csv} com as seguintes informações:
-nome  dos  times,  posição  e time  dos  jogadores  (considera-se  o
-técnico  um  jogador com  a  posição  de técnico),  resultado  das
-partidas  do  campeonato,  lista  dos  scouts, e  a  tabela  final  da
-pontuação dos times no campeonato.
-
-\begin{table}[h]
-\begin{center}
-\caption[]{Tipos de Scouts}
-\label{tab:model}
-\begin{tabular}{| l | c | c | c | c | c | c | c | c | c | c |}
-\hline
-\multicolumn{2}{|c|}{Scouts de Ataque} & \multicolumn{2}{|c|}{Scouts de Defesa} \\
-\hline
-Gol                   &  8.0 pts & Jogo sem sofrer gols &  5.0 pts \\
-Assistência           &  5.0 pts & Defesa de pênalti    &  7.0 pts \\
-Finalização na trave  &  3.0 pts & Defesa difícil\ts{1} &  3.0 pts \\
-Finalização defendida &  1.2 pts & Roubada de bola      &  1.5 pts \\
-Finalização para fora &  0.8 pts & Gol contra           & -5.0 pts \\
-Falta sofrida         &  0.5 pts & Cartão vermelho      & -5.0 pts \\
-Pênalti perdido       & -4.0 pts & Cartão amarelo       & -2.0 pts \\
-Impedimento           & -0.5 pts & Gol sofrido\ts{1}    & -2.0 pts \\
-Passe errado          & -0.3 pts & Falta cometida       & -0.5 pts \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-% \ts{1}scots exclusivos de goleiro.
-
-Abaixo, os  itens abaixo  complementam a \rtab{model}  com a  lista de
-Scouts, também sendo atualizado a cada rodada:
+A primeira etapa realizada em \cite{git_cartola} para implmentar o modelo de predição foi analisar os dados do fornecidos pela API do cartola e fazer as limpezas necessárias para criar amostras corretas e relevantes para o preditor. Analisando os dados previamente, alguns problemas foram detectados:
 
 \begin{itemize}
-
-\item \textbf{atletas.nome:}                nome completo do jogador
-\item \textbf{atletas.apelido:}             nome/apelido do jogador
-\item \textbf{atletas.rodada\_id:}          número da rodada do Brasileirão
-\item \textbf{atletas.clube\_id:}           abreviação do clube do jogador
-\item \textbf{atletas.posicao\_id:}         posição do jogador
-\item \textbf{atletas.clube.id.full\_name:} clube do jogador
-\item \textbf{atletas.status\_id:}          status do jogador na rodada
-\item \textbf{atletas.pontos\_num:}         pontuação dos scouts
-\item \textbf{atletas.preco\_num:}          preço do jogador
-\item \textbf{atletas.variacao\_num:}       variação do preço do jogador
-\item \textbf{atletas.media\_num:}          média do jogador
-\item \textbf{atletas.jogos\_num:}          quantidade de jogos disputados
-\item \textbf{atletas.scout:}               quantidade de scouts obtidos
-
+	\item Jogadores com todos os scouts NANs.
+	\item Jogadores com a coluna 'ClubeID' = NAN.
+	\item Jogadores com a coluna 'Status' = NAN.
+	\item Jogadores com a pontuação não equivalente a soma ponderada dos scouts.
 \end{itemize}
+
+A coluna  atletas.clube\_id tem campos repetidos e divergentes: por exemplo, todos os Atléticos (MG, PR, e GO) são ATL. Além disso, há jogadores com siglas diferentes das equipes que eles jogam (por exemplo, Maicosuel [id: 37851]).
+A coluna 'athletes.atletas.scout' não é informativa.
+Os scouts de 2015 dos jogadores são cumulativos: ou seja, os scouts dos jogadores vão sendo somados a cada rodada. Entretanto, a pontuação não é. Isso também causa o repetimento de dados.
+
+\subsection{Atualização dos scouts cumulativos de 2015}
+Como dito anteriomente, os dados sobre os scouts de 2015 foram disponibilizados de maneira cumulativa pela , ou seja, os scouts de uma rodada são adicionados aos scouts anteriores a cada nova rodada que um jogador participa. Portanto, foi necessário tirar essa acumulação para cada jogador, de que maneira que a representação dos dados ficasse coerente.
+
+Para isso, dada uma rodada específica, os scouts de um jogador são subtraídos do máximo dos scouts de todas as rodadas anteriores. Repare que assim há chance do scout Jogo Sem Sofrer Gols (SG) ser negativo se o jogador não sofre gols na rodada anterior e sofre na rodada atual. Quando isso acontece, esse scout é atualizado.
+
+
+\subsection{Verificação da pontuação com os scouts}
+
+Por inconsistência na base de dados fornecida pela API do cartola, alguns jogadores possuiam pontuações que não condiziam com seus scouts. Para esses casos, o jogador é removido da base de dados para evitar qualquer tipo de ruído.
+Ao final, mais de 4000 jogadores foram removidos.
+
+\subsection{Remoção das linhas duplicadas}
+
+A última operação realizada para limpar a base de dados foi apagar as linhas repetidas. A existencia de linhas repetidas deve-se ao fato de que a partir da primeira participação de um jogador no campeonato, ele aparece em todas as rodadas subsequentes, mesmo que não tenha jogado. As entradas redundantes não são necessárias ao modelo, por isso foram removidas.
+
+
+\section{Criação das Amostras}
+
+Uma vez a base de dados limpa, o próximo passo foi transfor
+Agora, vamos pegar os dados que limpamos e transformá-los em dados utilizáveis para criação dos modelos. Para isso, foi efetuar as seguintes operações:
+\begin{itemize}
+	\item \textbf{Selecionar somente as colunas de interesse:} colunas como atletas.nome, atletas.foto, etc não são relevantes para criação do modelo. No entanto, colunas como o AtletaID e atletas.apelido, mesmo que não utilizadas para treinamento do modelo, são importante para avaliar o resultado e, portanto, também serão consideradas.
+
+	\item \textbf{Converter todos os dados categóricos para numéricos:} as colunas Posicao, ClubeID, opponent e casa serão convertidas numéricos.
+\end{itemize}
+
+
+\section{treinamento do Modelo}
+
+O modelo preditor utilizado foi uma Rede Neural Artificial. Em resumo, o  modelo recebe como entrada os dados de uma determinada rodada e faz uma predição das pontuações dos jogadores para a próxima rodada.
+
+
+Para estimar a melhor arquitetura para rede, bem como os hiperparâmetros, foi utilizada a estratégia \textit{GridSearch}. Nesse método, todas as combinações possíveis entre os parâmetros são testados usando uma validação cruzada com 5 folds. A combinação de parâmetros que for melhor na média dos folds, é considerada a melhor.
+
+Optou-se também por normalizar os dados utilizando a estratégia \textit{MinMaxScaler}, que normaliza cada atributo no intervalo [0-1], e utilizar o método de otimização \textit{adam}. Adam é um algoritmo de otimização que pode ser usado em vez do procedimento clássico de descida de gradiente estocástico para atualizar os pesos da rede de forma iterativa com base nos dados de treinamento.
+
+
+
+Uma vez que trata-se de um problema de regressão, a função de ativação da saída escolhida para a rede foi a função linear e a rede será treinada visando minimizar a Root Mean Squared Error (RMSE).
+
+\begin{table}[]
+\begin{tabular}{l|lllll}
+\textbf{\begin{tabular}[c]{@{}l@{}}Configuração\\ da Rede\end{tabular}} & \textbf{fold 1} & \textbf{fold 2} & \textbf{fold 3} & \textbf{fold 4} & \multicolumn{1}{c}{\textbf{fold 5}} \\ \hline
+(50,50,50,50)                                                           & -19.514         & -22.250         & -19.641         & -19.224         & -17.298                             \\
+(50, 100, 50)                                                           & -22.382         & -19.712         & -19.404         & -19.025         & -17.154                             \\
+(50,100,100,50)                                                         & -17.114         & -19.669         & -22.350         & -19.490         & -19.038                             \\
+(128)                                                                   & -19.791         & -19.503         & -22.334         & -19.013         & -17.163                             \\
+(128,128)                                                               & -22.282         & -19.824         & -20.116         & -17.211         & -19.424                             \\
+(128, 128, 128)                                                         & -19.796         & -17.251         & -19.702         & -19.019         & -22.412                            
+\end{tabular}
+\end{table}
+
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{loss_function.png}
+  \caption{A boat.}
+  \label{fig:boat1}
+\end{figure}
+
+\section{Propostas para melhorar o Baseline.}
+A principio, cogitamos utilizar as seguintes estratégias para melhorar o baseline:
+
+\begin{enumerate}
+	\item Utilização do \textit{Random Forest}. Esse modelo consiste em um método de aprendizado conjunto para classificação, regressão e outras tarefas, que operam construindo uma multiplicidade de árvores de decisão no momento do treinamento e gerando a classe que é o modo das classes ou previsão média das árvores individuais. Essa proposta foi discutida em \url{https://github.com/henriquepgomide/caRtola/issues/33}, por esse motivo resolvemos testá-la para avaliar os resultados.
+	\item Acreditamos também que podemos melhorar os resultados modificando a rede para receber como entrada não só apenas os dados de uma terminada rodada, mas sim um histórico das últimas \textit{n} rodadas. Isso deve-se ao fato de que, pela experiencia que temos assistindo futebol, o desempenho dos jogadores oscila de acordo com um determinado histórico. Faremos essa modificação na esperança que o modelo reconheça esse padrão.
+\end{enumerate}
+
+
+
 
 \begin{thebibliography}{00}
 

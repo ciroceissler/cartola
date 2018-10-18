@@ -165,54 +165,51 @@ modelo, por isso foram removidas.
 
 \section{Criação das Amostras}
 
-Uma vez  a base de  dados limpa, o  próximo passo foi  transformar os
-dados limpos  em dados utilizáveis  para criação dos  modelos. Para
-isso, foi efetuar as seguintes operações:
+Continuando  a implementação  após a  limpeza da  base de  dados, o
+próximo passo  foi transformar os  dados para tornar  utilizáveis na
+criação dos modelos. Desta forma, duas operações são realizadas e
+descritadas abaixo:
 
 \begin{itemize}
 
 \item  \textbf{Selecionar somente  as colunas  de interesse:}  colunas
-como  atletas.nome,  atletas.foto,  etc   não  são  relevantes  para
-criação  do   modelo.  No  entanto,   colunas  como  o   AtletaID  e
-atletas.apelido, mesmo que não utilizadas para treinamento do modelo,
-são importante para  avaliar o resultado e,  portanto, também serão
-consideradas.
+como  'atletas.nome', 'atletas.foto',  etc não  são relevantes  para
+criação  do  modelo.  No  entanto,   colunas  como  o  'AtletaID'  e
+'atletas.apelido',  mesmo  que  não utilizadas  para  treinamento  do
+modelo, são importante para avaliar  o resultado e, portanto, também
+serão consideradas.
 
 \item \textbf{Converter todos os  dados categóricos para numéricos:}
-as  colunas  Posicao,  ClubeID,  opponent e  casa  serão  convertidas
-numéricos.
+as   colunas  'Posicao',   'ClubeID',  'opponent'   e  'casa'   serão
+convertidas para número.
 
 \end{itemize}
 
 
 \section{treinamento do Modelo}
 
-O modelo preditor utilizado foi uma Rede Neural Artificial. Em resumo,
-o modelo recebe como entrada os  dados de uma determinada rodada e faz
-uma predição das pontuações dos jogadores para a próxima rodada.
+O  modelo  preditor  utilizado  foi uma  rede  neural  artificial  com
+diferentes configurações para avaliar o desempenho delas. Em resumo,
+o  seu funcionamento  acaba sendo  bem simples,  o modelo  recebe como
+entrada os  dados de uma determinada  rodada e faz uma  predição das
+pontuações dos jogadores para a próxima rodada.
 
 Para   estimar  a   melhor  arquitetura   para  rede,   bem  como   os
 hiperparâmetros,  foi  utilizada a  estratégia  \textit{GridSearch}.
 Nesse método, todas as  combinações possíveis entre os parâmetros
-são  testados  usando   uma  validação  cruzada  com   5  folds.  A
-combinação de  parâmetros que  for melhor na  média dos  folds, é
-considerada a melhor.
+são  testados usando  uma validação  cruzada com  5 \tit{folds}.  A
+combinação de parâmetros que for  melhor na média dos \tit{folds},
+é  considerada  a melhor.  A  \rtab{experiments}  mostra o  resultado
+da  estratégia comentada  acima  para  diferentes configurações  de
+redes  neurais, variando  a quantidade  de camadas  escondidas e  seus
+neurônios.
 
-Optou-se  também por  normalizar  os dados  utilizando a  estratégia
-\textit{MinMaxScaler}, que normaliza cada atributo no intervalo [0-1],
-e  utilizar  o  método  de otimização  \textit{adam}.  Adam  é  um
-algoritmo de  otimização que pode  ser usado em vez  do procedimento
-clássico de descida de gradiente estocástico para atualizar os pesos
-da rede de forma iterativa com base nos dados de treinamento.
-
-Uma  vez que  trata-se de  um problema  de regressão,  a função  de
-ativação da saída  escolhida para a rede foi a  função linear e a
-rede  será  treinada visando  minimizar  a  Root Mean  Squared  Error
-(RMSE).
-
-\begin{table}[]
+\begin{table}[h]
+\caption[]{Experimentos das Redes Neurais com uma Camada Oculta}
+\label{tab:experiments}
 \begin{tabular}{l|lllll}
-\textbf{\begin{tabular}[c]{@{}l@{}}Configuração\\ da Rede\end{tabular}} & \textbf{fold 1} & \textbf{fold 2} & \textbf{fold 3} & \textbf{fold 4} & \multicolumn{1}{c}{\textbf{fold 5}} \\ \hline
+\textbf{\begin{tabular}[c]{@{}l@{}}Configuração\\ da Rede\end{tabular}} & \textbf{fold 1} & \textbf{fold 2} & \textbf{fold 3} & \textbf{fold 4} & \multicolumn{1}{c}{\textbf{fold 5}} \\
+\hline
 (50,50,50,50)                                                           & -19.514         & -22.250         & -19.641         & -19.224         & -17.298                             \\
 (50, 100, 50)                                                           & -22.382         & -19.712         & -19.404         & -19.025         & -17.154                             \\
 (50,100,100,50)                                                         & -17.114         & -19.669         & -22.350         & -19.490         & -19.038                             \\
@@ -222,16 +219,42 @@ rede  será  treinada visando  minimizar  a  Root Mean  Squared  Error
 \end{tabular}
 \end{table}
 
+A  \rfig{loss}  mostra  a  função  de perda  do  modelo  com  melhor
+resultado na média. (TODO)
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics[width=\linewidth]{loss_function.png}
-  \caption{Loss Function.}
-  \label{fig:boat1}
+  \caption{Função de Perda.}
+  \label{fig:loss}
+\end{figure}
+
+Optou-se  também por  normalizar  os dados  utilizando a  estratégia
+\tit{MinMaxScaler}, que normaliza cada  atributo no intervalo [0-1], e
+utilizar  o  método  de  otimização \tit{adam}.  \tit{Adam}  é  um
+algoritmo de  otimização que pode  ser usado em vez  do procedimento
+clássico de descida de gradiente estocástico para atualizar os pesos
+da rede de forma iterativa com base nos dados de treinamento.
+
+Uma  vez que  trata-se de  um problema  de regressão,  a função  de
+ativação da saída  escolhida para a rede foi a  função linear e a
+rede  será  treinada visando  minimizar  a  Root Mean  Squared  Error
+(RMSE).
+
+A   \rfig{predict}  possui   os  valores   da  pontuação   reais  em
+azul  comparado  com  os  preditos  em  vermelho.  O  gráfico  mostra
+que  os  valores  preditos  estão abaixo  do  valor  real,  mostrando
+características de uma caso de \tit{underfitting} do modelo.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{images/predict.png}
+  \caption{Pontuação Predito vs Real.}
+  \label{fig:predict}
 \end{figure}
 
 \section{Propostas para melhorar o Baseline.}
 
-A  principio,  cogitamos  utilizar   as  seguintes  estratégias  para
+A  princípio,  cogitamos  utilizar  as  seguintes  estratégias  para
 melhorar o baseline:
 
 \begin{enumerate}

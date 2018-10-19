@@ -1,0 +1,212 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage[portuges,brazil,english]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[latin1,utf8]{inputenc}
+\usepackage{listings}
+\usepackage{color}
+
+% Commands to help in references
+\newcommand{\rchap}[1]{Chapter~\ref{chap:#1}}
+\newcommand{\rsec}[1]{Section~\ref{sec:#1}}
+\newcommand{\rsecs}[2]{Sections~\ref{sec:#1} --~\ref{sec:#2}}
+\newcommand{\rtab}[1]{Tabela~\ref{tab:#1}}
+\newcommand{\rfig}[1]{Figura~\ref{fig:#1}}
+\newcommand{\rfigs}[2]{Figures~\ref{fig:#1} --~\ref{fig:#2}}
+\newcommand{\rfign}[3]{Figures~\ref{fig:#1}, \ref{fig:#2} \& \ref{fig:#3}}
+\newcommand{\rlst}[1]{Listing~\ref{lst:#1}}
+\newcommand{\rlsts}[2]{Listing~\ref{lst:#1}~--~\ref{lst:#2}}
+\newcommand{\rlstn}[3]{Listings~\ref{lst:#1}{#2}~--~\ref{lst:#1}{#3}}
+\newcommand{\req}[1]{Equation~\ref{eq:#1}}
+\newcommand{\reqs}[2]{Equations~\ref{eq:#1} --~\ref{eq:#2}}
+\newcommand{\ttt}[1]{{\texttt{#1}}}
+\newcommand{\tit}[1]{{\textit{#1}}}
+\newcommand{\ts}{\textsuperscript}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+
+\lstdefinestyle{mystyle}{
+  commentstyle=\foonotesize\color{codegreen},
+  backgroundcolor=\color{backcolour},
+  stringstyle=\color{codepurple},
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+
+\lstset{
+  classoffset=0,
+  keywordstyle=\color{back},
+  classoffset=1,
+  morekeywords={use,hrw,module,increment,HARP,Catapult,synthesize},
+  keywordstyle=\color{purple},
+  classoffset=2,
+  morekeywords={pragma,omp,parallel,target,map,data,device,for,},
+  keywordstyle=\color{darkblue},
+  frame=single,
+  style=mystyle
+}
+
+\begin{document}
+
+\title{Desmistificando o Cartola FC}
+
+\author
+{
+  \IEEEauthorblockN{Ciro Ceissler}
+  \IEEEauthorblockA{RA 108786\\ ciro.ceissler@gmail.com}
+  \and
+  \IEEEauthorblockN{Lucas de Souza e Silva}
+  \IEEEauthorblockA{RA \\ lucasonline1@gmail.com}
+  \and
+  \IEEEauthorblockN{Matheus Laborão Netto}
+  \IEEEauthorblockA{RA \\ mln.laborao@gmail.com}
+  \and
+  \IEEEauthorblockN{Ramon Nepomuceno}
+  \IEEEauthorblockA{RA 192771\\ ramonn76@gmail.com}
+}
+
+\maketitle
+
+\section{Introduction}
+
+O futebol é um esporte com diversos  fãs ao redor do mundo e com uma
+imprevisibilidade muito grande, supreendendo os torcedores. Um exemplo
+recente foi  a Copa  do Mundo de  2018 no qual  o campeão  do torneio
+anterior não conseguiu passar nem da primeira fase, perdendo 2x0 para
+Coreia do Sul apenas 57\ts{a}  colocada no ranking FIFA \cite{fifa}, e
+a presença  Croácia na  final. Ainda nesta  Copa do  Mundo; diversos
+bancos, incluindo  o \tit{Goldman Sachs}, utilizaram  este evento para
+demonstrar a capacidade de  prever eventos complexos \cite{news}, eles
+chegaram a  rodar milhões de  variações do torneio para  calcular a
+probabilidade de cada time avançar na competição e mesmo assim não
+obtiveram um resultado satisfatório.
+
+Os fãs  de futebol  também participam  da "brincadeira"  através do
+Cartola FC, um  "fantasy game" sobre este esporte. O  Cartola FC é um
+jogo online fictício no qual você pode montar seu time com jogadores
+reais da Série A do Campeonato  Brasileiro. No jogo é preciso montar
+seu time, escolhendo  técnico, jogadores e o esquema  tático. Com as
+moedas  do  jogo, inicialmente  C\$  100.00  cartoletas, é  possível
+escalar  o seu  time, comprando  e vendendo  jogadores a  cada rodada,
+importante  adicionar que  a  (des)valorização  do jogador  acontece
+após cada  rodada e leva  em consideração a pontuação  do atleta,
+além da  média dos  outros jogadores. A  escalação deve  ser feita
+antes do  primeiro jogo da rodada  e a cada uma,  os jogadores recebem
+pontuações  baseadas  em suas  ações  durante  as partidas,  e.g.,
+gols feitos,  chutes defendidos,  bolas roubadas, faltas  cometidas ou
+sofridas, cartões  recebidos, entre outras. As  ações dos jogadores
+em campo são  chamadas de Scouts e são elas  que geram a pontuação
+do time. Por fim, o Capitão tem sua pontuação duplicada e não pode
+ser o técnico.
+
+No  Cartola  FC   de  2017,  o  jogador   vencedor  totalizou  2460.19
+pontos  ao final  de  todas  as rodadas  (média  de  67.4 pontos  por
+rodada),  competindo   contra  4  milhões  de   times  escalados.  Em
+\cite{viscondiaplicacao}, um sistema  de previsão aplicando técnicas
+de  \tit{machine  learning}  foi  proposto  para  conseguir  a  melhor
+escalação do time a em cada rodada, entretanto os resultados obtidos
+não permitiria vencer  o torneio. Além disso, este  trabalho fez uma
+análise dos  dados, explanando algumas observações  como: o esquema
+tático tem uma leve variação, sendo o 4-4-2 a melhor formação.
+
+O projeto propõe um modelo  preditivo para maximizar a pontuação do
+Cartola FC, informando  a cada rodada do jogo  quais parâmetros devem
+ser utilizados, ou seja, escolher  os jogadores/técnico a cada rodada
+para o torneio de 2018.
+
+\section{Base de Dados}
+
+A base de  dados \cite{git_cartola} contém as  informações sobre os
+campeonatos  de 2014  a  2017 consolidadas  e  serão utilizadas  para
+aprendizado do nosso  modelo, os dados sobre 2018  são adicionadas ao
+término de cada rodada. No  repositório, cada campeonato é dividido
+em cinco arquivos do formato \tit{csv} com as seguintes informações:
+nome  dos  times,  posição  e time  dos  jogadores  (considera-se  o
+técnico  um  jogador com  a  posição  de técnico),  resultado  das
+partidas  do  campeonato,  lista  dos  scouts, e  a  tabela  final  da
+pontuação dos times no campeonato.
+
+\begin{table}[h]
+\begin{center}
+\caption[]{Tipos de Scouts}
+\label{tab:model}
+\begin{tabular}{| l | c | c | c | c | c | c | c | c | c | c |}
+\hline
+\multicolumn{2}{|c|}{Scouts de Ataque} & \multicolumn{2}{|c|}{Scouts de Defesa} \\
+\hline
+Gol                   &  8.0 pts & Jogo sem sofrer gols &  5.0 pts \\
+Assistência           &  5.0 pts & Defesa de pênalti    &  7.0 pts \\
+Finalização na trave  &  3.0 pts & Defesa difícil\ts{1} &  3.0 pts \\
+Finalização defendida &  1.2 pts & Roubada de bola      &  1.5 pts \\
+Finalização para fora &  0.8 pts & Gol contra           & -5.0 pts \\
+Falta sofrida         &  0.5 pts & Cartão vermelho      & -5.0 pts \\
+Pênalti perdido       & -4.0 pts & Cartão amarelo       & -2.0 pts \\
+Impedimento           & -0.5 pts & Gol sofrido\ts{1}    & -2.0 pts \\
+Passe errado          & -0.3 pts & Falta cometida       & -0.5 pts \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+% \ts{1}scots exclusivos de goleiro.
+
+Abaixo, os  itens abaixo  complementam a \rtab{model}  com a  lista de
+Scouts, também sendo atualizado a cada rodada:
+
+\begin{itemize}
+
+\item \textbf{atletas.nome:}                nome completo do jogador
+\item \textbf{atletas.apelido:}             nome/apelido do jogador
+\item \textbf{atletas.rodada\_id:}          número da rodada do Brasileirão
+\item \textbf{atletas.clube\_id:}           abreviação do clube do jogador
+\item \textbf{atletas.posicao\_id:}         posição do jogador
+\item \textbf{atletas.clube.id.full\_name:} clube do jogador
+\item \textbf{atletas.status\_id:}          status do jogador na rodada
+\item \textbf{atletas.pontos\_num:}         pontuação dos scouts
+\item \textbf{atletas.preco\_num:}          preço do jogador
+\item \textbf{atletas.variacao\_num:}       variação do preço do jogador
+\item \textbf{atletas.media\_num:}          média do jogador
+\item \textbf{atletas.jogos\_num:}          quantidade de jogos disputados
+\item \textbf{atletas.scout:}               quantidade de scouts obtidos
+
+\end{itemize}
+
+\begin{thebibliography}{00}
+
+\bibitem{fifa} FIFA, FIFA. "FIFA/Coca-Cola World Ranking 2018."
+
+\bibitem{news}  Martin,   William.  "Big  banks  like   Goldman  Sachs
+spectacularly failed to predict the  World Cup winner — here's why".
+Business Insider (2018).
+
+\bibitem{win_cartola} GloboEsporte.com. "Com 2460.19 pontos 'Jorgito10
+(O mito)' é o vencedor da liga GE AP em 2017". GloboEsporte.com.
+
+\bibitem{viscondiaplicacao}   .VISCONDI,   et  al.   "Aplicação   de
+aprendizado de  máquina para otimização  da escalação de  time no
+jogo Cartola FC."
+
+\bibitem{git_cartola}      GitHub     -      Repositório     caRtola.
+\url{https://github.com/henriquepgomide/caRtola/}.
+
+\end{thebibliography}
+
+\end{document}

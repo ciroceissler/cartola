@@ -1,0 +1,9 @@
+HOWTO
+=====
+
+```
+$ make download
+$ make run
+```
+
+% taf!

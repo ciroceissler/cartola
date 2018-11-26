@@ -218,7 +218,7 @@ class Cartola:
 
         return df_samples
 
-    def train(self, df_samples, plot=False, load=False, save=False):
+    def train(self, type, df_samples, plot=False, load=False, save=False):
 
         if load == True:
             df_samples = pd.read_csv('src/data/data_samples.csv')
@@ -246,258 +246,79 @@ class Cartola:
 
         samples = scaler.fit_transform(samples)
 
-        steps = [('MinMax', MinMaxScaler()), ('NN', MLPRegressor(solver='adam', activation='identity', learning_rate_init=1e-2, momentum=0.9, max_iter=2000))]
-        pipe = Pipeline(steps)
-        params = dict(NN__hidden_layer_sizes=[(50,50,50,50,50), (50,100,50), (50,100,100,50), (128), (128,128), (128, 128, 128)])
-        # params = dict(NN__hidden_layer_sizes=[(1024, 1024), (1024, 1024, 1024), (2048, 2048), (4096, 4096)])
+        if type == "NeuralNetwork":
+            steps = [('MinMax', MinMaxScaler()), ('NN', MLPRegressor(solver='adam', activation='identity', learning_rate_init=1e-2, momentum=0.9, max_iter=2000))]
+            pipe = Pipeline(steps)
+            params = dict(NN__hidden_layer_sizes=[(50,50,50,50,50), (50,100,50), (50,100,100,50), (128), (128,128), (128, 128, 128)])
 
-        model = GridSearchCV(pipe, params, scoring='neg_mean_squared_error', n_jobs=-1, cv=5, verbose=10)
-        model.fit(samples, scores)
+            model = GridSearchCV(pipe, params, scoring='neg_mean_squared_error', n_jobs=-1, cv=5, verbose=10)
 
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
+            model.fit(samples, scores)
 
-        return model
+        elif type == "RandomForest":
+            samples = scaler.fit_transform(samples)
 
-    def train_rf(self, df_samples, plot=False, load=False, save=False):
+            n_estimators = [100]
+            param_grid = {'n_estimators': n_estimators}
 
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
+            model = GridSearchCV(RandomForestRegressor(max_depth=500), param_grid, cv=5)
 
-        df_samples = df_samples[df_samples.ano != 2017]
+            model.fit(samples, scores)
 
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
+        elif type == "BayesianRidge":
+            samples = scaler.fit_transform(samples)
 
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
+            alpha_1  = [1e-7, 1e-6, 1e-5]
+            alpha_2  = [1e-7, 1e-6, 1e-5]
+            lambda_1 = [1e-7, 1e-6, 1e-5]
+            lambda_2 = [1e-7, 1e-6, 1e-5]
 
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
+            param_grid = {'alpha_1': alpha_1, 'alpha_2':alpha_2, 'lambda_1':lambda_1, 'lambda_2':lambda_2}
 
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
+            model = GridSearchCV(BayesianRidge(), param_grid, cv=5)
 
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
+            model.fit(samples, scores)
 
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
+        elif type == "Ridge":
+            model = RidgeCV().fit(samples, scores)
 
-        scaler = MinMaxScaler()
+            model.fit(samples, scores)
 
-        samples = scaler.fit_transform(samples)
+        elif type == "ElasticNet":
+            samples = scaler.fit_transform(samples)
 
-        n_estimators = [100]
-        param_grid = {'n_estimators': n_estimators}
+            model = ElasticNetCV().fit(samples, scores)
 
-        model = GridSearchCV(RandomForestRegressor(max_depth=500), param_grid, cv=5)
-        model.fit(samples, scores)
+        elif type == "GradientBoost":
+            n_estimators = [50]
+            learning_rate = [0.1]
+            param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
 
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
+            model = GridSearchCV(GradientBoostingRegressor(max_depth=3), param_grid, cv=5)
 
-        return model
+            model.fit(samples, scores)
 
-    def train_bayesianridge(self, df_samples, plot=False, load=False, save=False):
+        elif type == "SVR":
+            n_estimators = [50]
+            learning_rate = [0.1]
+            param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
 
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
+            C  = [50]
+            gamma = [0.3]
+            param_grid = {'C': C, 'gamma': gamma}
 
-        df_samples = df_samples[df_samples.ano != 2017]
+            model = GridSearchCV(SVR(), param_grid, cv=5)
 
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
-
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
-
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
-
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
-
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
-
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
-
-        scaler = MinMaxScaler()
-
-        samples = scaler.fit_transform(samples)
-
-        alpha_1 = [1e-6, 1e-5, 1e-7]
-        alpha_2 = [1e-6, 1e-5, 1e-7]
-        lambda_1 = [1e-6, 1e-5, 1e-7]
-        lambda_2 = [1e-6, 1e-5, 1e-7]
-
-        param_grid = {'alpha_1': alpha_1, 'alpha_2':alpha_2, 'lambda_1':lambda_1, 'lambda_2':lambda_2}
-
-        model = GridSearchCV(BayesianRidge(), param_grid, cv=5)
-        model.fit(samples, scores)
+            model.fit(samples, scores)
 
         if save == True:
             pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
 
         return model
-
-    def train_ridge(self, df_samples, plot=False, load=False, save=False):
-
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
-
-        df_samples = df_samples[df_samples.ano != 2017]
-
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
-
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
-
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
-
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
-
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
-
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
-
-        scaler = MinMaxScaler()
-
-        samples = scaler.fit_transform(samples)
-
-        model = RidgeCV().fit(samples, scores)
-
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
-
-        return model
-
-    def train_elasticnet(self, df_samples, plot=False, load=False, save=False):
-
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
-
-        df_samples = df_samples[df_samples.ano != 2017]
-
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
-
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
-
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
-
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
-
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
-
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
-
-        scaler = MinMaxScaler()
-
-        samples = scaler.fit_transform(samples)
-
-        model = ElasticNetCV().fit(samples, scores)
-
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
-
-        return model
-
-    def train_gradientboost(self, df_samples, plot=False, load=False, save=False):
-
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
-
-        df_samples = df_samples[df_samples.ano != 2017]
-
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
-
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
-
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
-
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
-
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
-
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
-
-
-        scaler = MinMaxScaler()
-
-        samples = scaler.fit_transform(samples)
-
-        n_estimators = [50]
-        learning_rate = [0.1]
-        param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
-
-        model = GridSearchCV(GradientBoostingRegressor(max_depth=3), param_grid, cv=5)
-        model.fit(samples, scores)
-
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
-
-        return model
-
-    def train_svm(self, df_samples, plot=False, load=False, save=False):
-
-        if load == True:
-            df_samples = pd.read_csv('src/data/data_samples.csv')
-
-        df_samples = df_samples[df_samples.ano != 2017]
-
-        #Modificação para treinar com mais de uma temporada
-        df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
-
-        df_train = pd.DataFrame(data = [], columns=list(df_samples.columns) + ['pred'])
-
-        n_rounds = df_samples['ano_rodada'].max()
-        init_rounds = df_samples['ano_rodada'].min()
-
-        for round_train, round_pred in zip(range(init_rounds, n_rounds), range(init_rounds+1, n_rounds+1)):
-            df_round = self.__create_samples(df_samples, round_train, round_pred)
-
-            if df_round.shape[0] != 0:
-                df_train = df_train.append(df_round, ignore_index=True)
-
-        samples = df_train[df_train.columns.difference(['AtletaID', 'Rodada','pred', 'ano', 'ano_rodada'])].values.astype(np.float64)
-        scores  = df_train['pred'].values
-
-
-        scaler = MinMaxScaler()
-
-        samples = scaler.fit_transform(samples)
-
-        n_estimators = [50]
-        learning_rate = [0.1]
-        param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
-
-        C  = [50]
-        gamma = [0.3]
-        param_grid = {'C': C, 'gamma': gamma}
-        model = GridSearchCV(SVR(), param_grid, cv=5)
-        model.fit(samples, scores)
-
-        if save == True:
-            pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
-
-        return model
-
 
     def play(self, df_test, model, year, load=False):
+
+        print('\n=== year : ', year, ' ===')
 
         cols_info = ['Rodada', 'ano']
 
@@ -507,7 +328,7 @@ class Cartola:
         if load == True:
             df_test = pd.read_csv('src//data/data_clean.csv')
 
-        df_test = df_test[df_test.ano == 2017]
+        df_test = df_test[df_test.ano == year]
 
         cols_of_interest = df_test.columns.difference(['Apelido', 'Status', 'Participou', 'dia', 'mes']).values.tolist()
 
@@ -528,11 +349,15 @@ class Cartola:
 
             df = df_test[(df_test['Rodada'] == (round_to_predict))]
 
-            total_points += df.loc[df['Apelido'].isin(array)]['Pontos'].sum()
+            points = df.loc[df['Apelido'].isin(array)]['Pontos'].sum()
 
+            total_points += points
             total_rounds +=1
 
-        print(total_points/total_rounds)
+            print('round #', total_rounds + 5, ' : ', points)
+
+        print('\ntotal points: ', total_points)
+        print('mean  points: ', total_points/total_rounds)
 
 if __name__ == '__main__':
 
@@ -542,25 +367,14 @@ if __name__ == '__main__':
 
     cartola = Cartola()
 
-    data_clean    = cartola.clean()
-    data_samples  = cartola.prepare(data_clean)
+    data_clean   = cartola.clean()
+    data_samples = cartola.prepare(data_clean)
 
-    model         = cartola.train(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
+    types = ["NeuralNetwork", "RandomForest", "BayesianRidge", "Ridge", "ElasticNet", "GradientBoost", "SVR"]
 
-    model         = cartola.train_rf(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
+    for type in types:
+        model = cartola.train(type, data_samples)
 
-    model         = cartola.train_bayesianridge(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
-
-    model         = cartola.train_ridge(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
-
-    model         = cartola.train_elasticnet(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
-
-    model         = cartola.train_svm(data_samples)
-    cartola.play(data_clean, model, 2017) # play 2017 season
+        cartola.play(data_clean, model, 2017) # play 2017 season
 
 # taf!

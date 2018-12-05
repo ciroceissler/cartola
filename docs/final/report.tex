@@ -205,29 +205,92 @@ de  maneira  preliminar para  identificar  quais  melhorias podem  ser
 realizadas, além  de eliminar inconsistências no  arquivo, utilizado
 como entrada para o treinamento do modelo.
 
-% TODO(ciroceissler): analise dos dados
 
-% remove todas as linhas cujo scouts são NANs
+\subsection{Limpeza}
 
-% Dimensões originais dos dados:  (43821, 77)
-% qtde. de jogadores com scouts:  43821
-% qtde. de linhas após eliminação da rodada 0:  43821
-% qtde. de linhas com posições válidas:  33045
-% qtde. de linhas com jogadores que participaram de alguma rodada:  33045
-% qtde. de jogadores com nome:  22839
-% Dimensão dos dados após as limpezas:  (22839, 77)
+A primeira  etapa realizada  para implementar  o modelo  de predição
+foi  analisar os  dados fornecidos  pela  API do  cartola, fazendo  as
+limpezas necessárias para criar amostras corretas e relevantes para o
+preditor. Os  dados devem  continuar consistente  após a  limpeza dos
+dados, ou  seja, nenhuma  coluna poderá  ser adicionada,  alterada ou
+removida. Após uma análise prévia dos dados, alguns problemas foram
+detectados nas informações dos jogadores:
 
-% remove todas as linhas com rodada == 0
+\begin{itemize}
+  \item todos os scouts com valor NaN (\tit{not a number}).
+  \item coluna 'ClubeID' com valor NaN.
+  \item coluna 'Status' com valor NaN.
+  \item pontuação não equivalente a soma ponderada dos scouts.
+\end{itemize}
 
-% remove técnicos e jogadores sem posição
+A coluna  'atletas.clube\_id' tem campos repetidos  e divergentes: por
+exemplo, todos os Atléticos (MG, PR, e GO) são ATL. Além disso, há
+jogadores  com  siglas diferentes  das  equipes  que eles  jogam  (por
+exemplo,  Maicosuel [id:  37851]).  A coluna  'athletes.atletas.scout'
+não é informativa. Os scouts de 2015 dos jogadores são cumulativos,
+ou seja,  os scouts dos  jogadores vão  sendo somados a  cada rodada.
+Entretanto, a pontuação não é. Isso também causa o repetimento de
+dados.
 
-% remove todos os jogadores que não participaram de alguma rodada
+As linhas que possuem as inconsistências citadas acima são removidas
+ou  atualizadas. Além  destas  modificações,  outras remoções  de
+dados  irrelevantes são  realizadas, por  exemplo jogadores  que não
+participaram de  nenhuma rodada, técnicos e  jogadores sem posição,
+jogadores sem nome, entre outros.
 
-% altera os Status = NAN para 'Provável'
+\subsection{Atualização dos scouts cumulativos de 2015}
 
-% atualiza nomes dos jogadores sem ids e remove jogadores sem nome
+Como  dito  anteriomente, os  dados  sobre  os  scouts de  2015  foram
+disponibilizados  de maneira  cumulativa pela  fornecidos pela  API do
+cartola, ou seja, os scouts de  uma rodada são adicionados aos scouts
+anteriores a cada nova rodada  que um jogador participa. Portanto, foi
+necessário tirar essa acumulação para  cada jogador, de maneira que
+a representação dos dados ficasse coerente.
 
-% preenche NANs restantes com zeros (verificado antes!)
+Para isso, dada  uma rodada específica, os scouts de  um jogador são
+subtraídos  do máximo  dos scouts  de todas  as rodadas  anteriores.
+Repare que assim  há chance do scout 'Jogo Sem  Sofrer Gols (SG)' ser
+negativo se o jogador não sofrer  gols na rodada anterior e sofrer na
+rodada atual. Quando isso acontece, esse scout é atualizado.
+
+\subsection{Verificação da pontuação com os scouts}
+
+Por inconsistência  na base de  dados fornecida pela API  do cartola,
+alguns  jogadores possuiam  pontuações que  não condiziam  com seus
+scouts. Para esses casos, o jogador  é removido da base de dados para
+evitar qualquer tipo de ruído. Ao final, mais de 4000 jogadores foram
+removidos.
+
+\subsection{Remoção das linhas duplicadas}
+
+A última operação realizada para limpar  a base de dados foi apagar
+as  linhas repetidas.  A existência  de linhas  repetidas deve-se  ao
+fato  de que  a partir  da primeira  participação de  um jogador  no
+campeonato, ele  aparece em todas  as rodadas subsequentes,  mesmo que
+não tenha jogado.  As entradas redundantes não  são necessárias ao
+modelo, por isso foram removidas.
+
+\subsection{Criação das Amostras}
+
+Continuando  a implementação  após a  limpeza da  base de  dados, o
+próximo passo  foi transformar os  dados para tornar  utilizáveis na
+criação dos modelos. Desta forma, duas operações são realizadas e
+descritadas abaixo:
+
+\begin{itemize}
+
+\item  \textbf{Selecionar somente  as colunas  de interesse:}  colunas
+como  'atletas.nome', 'atletas.foto',  etc não  são relevantes  para
+criação  do  modelo.  No  entanto,   colunas  como  o  'AtletaID'  e
+'atletas.apelido',  mesmo  que  não utilizadas  para  treinamento  do
+modelo, são importante para avaliar  o resultado e, portanto, também
+serão consideradas.
+
+\item \textbf{Converter todos os  dados categóricos para numéricos:}
+as   colunas  'Posicao',   'ClubeID',  'opponent'   e  'casa'   serão
+convertidas para número.
+
+\end{itemize}
 
 \section{Treinamento}
 

@@ -205,7 +205,6 @@ de  maneira  preliminar para  identificar  quais  melhorias podem  ser
 realizadas, além  de eliminar inconsistências no  arquivo, utilizado
 como entrada para o treinamento do modelo.
 
-
 \subsection{Limpeza}
 
 A primeira  etapa realizada  para implementar  o modelo  de predição
@@ -295,6 +294,81 @@ convertidas para número.
 \section{Treinamento}
 
 \subsection{Redes Neurais}
+
+O  primeiro modelo  preditor consiste  numa rede  neural artificial  e
+diferentes configurações para avaliar o desempenho delas. Em resumo,
+o  seu funcionamento  acaba sendo  bem simples,  o modelo  recebe como
+entrada os  dados de uma determinada  rodada e faz uma  predição das
+pontuações dos jogadores para a próxima rodada.
+
+Para   estimar  a   melhor  arquitetura   para  rede,   bem  como   os
+hiperparâmetros,  foi  utilizada a  estratégia  \textit{GridSearch}.
+Nesse método, todas as  combinações possíveis entre os parâmetros
+são  testados usando  uma validação  cruzada com  5 \tit{folds}.  A
+combinação de parâmetros que for  melhor na média dos \tit{folds},
+é considerada a  melhor. As seguintes combinações  de redes neurais
+foram utilizadas  com a  numeração de cada  item corresponde  ao seu
+\ttt{id}:
+
+\begin{enumerate}
+
+\item quatros camadas escondidas cada uma com 50 neurônios.
+
+\item três camadas escondidas sendo  os número de neurônios de cada
+uma delas é, respectivamente, 50, 100, 50.
+
+\item quatro camadas escondidas sendo os número de neurônios de cada
+uma delas é, respectivamente, 50, 100, 100, 50.
+
+\item apenas uma camada escondida com 128 neurônios.
+
+\item duas camadas escondidas cada uma com 128 neurônios.
+
+\item três camadas escondidas cada uma com 128 neurônios.
+
+\end{enumerate}
+
+% Optou-se  também por  normalizar  os dados  utilizando a  estratégia
+% \tit{MinMaxScaler}, que normaliza cada  atributo no intervalo [0-1], e
+% utilizar  o  método  de  otimização \tit{adam}.  \tit{Adam}  é  um
+% algoritmo de  otimização que pode  ser usado em vez  do procedimento
+% clássico de descida de gradiente estocástico para atualizar os pesos
+% da rede de forma iterativa com base nos dados de treinamento.
+
+Uma  vez que  trata-se de  um problema  de regressão,  a função  de
+ativação da saída  escolhida para a rede foi a  função linear e a
+rede  será  treinada visando  minimizar  a  Root Mean  Squared  Error
+(RMSE).
+
+A  \rtab{experiments}  mostra  o resultado  da  estratégia  comentada
+acima  para diferentes  configurações de  redes neurais,  variando a
+quantidade de  camadas escondidas  e seus neurônios.  Os \tit{scores}
+negativos obtidos indicam  que os modelos avaliados  tem um desempenho
+muito  ruim,  a documentação  do  \ttt{scikit-learn}  informa que  o
+melhor score seria 1.
+
+\begin{table}[h]
+\caption[]{Experimentos das Redes Neurais}
+\label{tab:experiments}
+\begin{tabular}{l|llllll}
+\tbf{id} & \tbf{fold 1} & \tbf{fold 2} & \tbf{fold 3} & \tbf{fold 4} & \tbf{fold 5} & \multicolumn{1}{c}{\tbf{média}} \\
+\hline
+1 & -19.514 & -22.250 & -19.641 & -19.224 & -17.298 & -18.879 \\
+2 & -22.382 & -19.712 & -19.404 & -19.025 & -17.154 & -18.601 \\
+3 & -17.114 & -19.669 & -22.350 & -19.490 & -19.038 & -18.585 \\
+4 & -19.791 & -19.503 & -22.334 & -19.013 & -17.163 & -18.562 \\
+5 & -22.282 & -19.824 & -20.116 & -17.211 & -19.424 & -18.592 \\
+6 & -19.796 & -17.251 & -19.702 & -19.019 & -22.412 & -18.843
+\end{tabular}
+\end{table}
+
+A melhor arquitetura  foi a que utiliza apenas uma  camada escondida e
+128 neurônios, sendo  a média do seu \tit{score} igual  a -18.562. O
+resultado mostra  que novas arquiteturas precisam  ser exploradas para
+conseguir  melhorar  este resultado,  uma  vez  que as  redes  neurais
+testadas  tem comportamento  muito similar  entre elas.  O \tit{score}
+para  o  conjunto  de  validação foi  de  -18.962  pelos  resultados
+analisados anteriormente esse baixo desempenho já era esperado.
 
 \subsection{Regressão Linear: Random Forest}
 

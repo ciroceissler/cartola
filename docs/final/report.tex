@@ -89,7 +89,7 @@
 
 \begin{abstract}
 
-TODO:
+TODO(ciroceissler):
 
 \end{abstract}
 
@@ -123,17 +123,9 @@ gols feitos,  chutes defendidos,  bolas roubadas, faltas  cometidas ou
 sofridas, cartões  recebidos, entre outras. As  ações dos jogadores
 em campo são  chamadas de Scouts e são elas  que geram a pontuação
 do time. Por fim, o Capitão tem sua pontuação duplicada e não pode
-ser o técnico.
-
-No  Cartola  FC   de  2017,  o  jogador   vencedor  totalizou  2460.19
-pontos  ao final  de  todas  as rodadas  (média  de  67.4 pontos  por
-rodada),  competindo   contra  4  milhões  de   times  escalados.  Em
-\cite{viscondiaplicacao}, um sistema  de previsão aplicando técnicas
-de  \tit{machine  learning}  foi  proposto  para  conseguir  a  melhor
-escalação do time a em cada rodada, entretanto os resultados obtidos
-não permitiria vencer  o torneio. Além disso, este  trabalho fez uma
-análise dos  dados, explanando algumas observações  como: o esquema
-tático tem uma leve variação, sendo o 4-4-2 a melhor formação.
+ser o  técnico. No Cartola FC  de 2017, o jogador  vencedor totalizou
+2460.19 pontos ao final de todas as rodadas (média de 67.4 pontos por
+rodada), competindo contra 4 milhões de times escalados.
 
 O projeto propõe um modelo  preditivo para maximizar a pontuação do
 Cartola FC, informando  a cada rodada do jogo  quais parâmetros devem
@@ -141,6 +133,27 @@ ser utilizados, ou seja, escolher  os jogadores/técnico a cada rodada
 para o torneio de 2018.
 
 \section{Trabalhos Relacionados}
+
+TODO(ciroceissler): football
+\cite{sugar2015predicting}
+\cite{porter2018predictive}
+\cite{lutz2015fantasy}
+\cite{dolan2015machine}
+\cite{becker2016analytical}
+
+Em  \cite{viscondiaplicaccao},  um   sistema  de  previsão  aplicando
+técnicas  de \tit{machine  learning}  foi proposto  para conseguir  a
+melhor escalação do time a  em cada rodada, entretanto os resultados
+obtidos não permitiria  vencer o torneio. Além  disso, este trabalho
+fez uma análise  dos dados, explanando algumas  observações como: o
+esquema  tático tem  uma  leve  variação, sendo  o  4-4-2 a  melhor
+formação.
+
+\cite{schmidt2017uso}
+
+\cite{mota2018cartola}
+
+\cite{gomide2018} \cite{git_cartola}
 
 \section{Base de Dados}
 
@@ -293,6 +306,16 @@ convertidas para número.
 
 \section{Treinamento}
 
+O problema se encaixa na categoria de esportes, ou seja, na , que é comumente
+resolvido através de um regressão linear para prever
+
+Nesse método, todas as  combinações possíveis entre os parâmetros
+
+As variações de soluções da regressão
+
+Os    dados    foram    normalizados    utilizando    a    estratégia
+\tit{MinMaxScaler}, que normaliza cada atributo no intervalo [0-1].
+
 \subsection{Redes Neurais}
 
 O  primeiro modelo  preditor consiste  numa rede  neural artificial  e
@@ -374,9 +397,25 @@ analisados anteriormente esse baixo desempenho já era esperado.
 
 \subsection{Regressão Linear: Ridge}
 
+A regressão linear de Ridge, chamada também regularização de Tikhonov,
+é um método para solucionar problemas
+
+\begin{equation}
+  J(w)=\lambda\norm{w}^2 + \sum_i (w^T x_i - y_i)^2.
+\end{equation}
+
 \subsection{Regressão Linear: Bayesian Ridge}
 
+% TODO(ciroceissler: parameters
+%
+% alpha_1  = [1e-7, 1e-6, 1e-5]
+% alpha_2  = [1e-7, 1e-6, 1e-5]
+% lambda_1 = [1e-7, 1e-6, 1e-5]
+% lambda_2 = [1e-7, 1e-6, 1e-5]
+
 \subsection{Regressão Linear: ElasticNet}
+
+\cite{zou2005regularization}
 
 \subsection{Regressão Linear: Gradient Boosting}
 
@@ -384,11 +423,94 @@ analisados anteriormente esse baixo desempenho já era esperado.
 
 \section{Resultados}
 
+Os modelos descritos  na seção anterior foram todos  validados com o
+conjunto de treinamento,  após tratamento dos dados,  e compreende os
+anos de  2014 até 2016.  Os dados do  campeonato de 2017  foi tratado
+como o  conjunto de validação,  ou seja, utiliza-se para  comparar a
+performance do modelo e definir qual será escolhido para a fase final
+dos experimentos.
+
 \subsection{Conjunto de Validação}
+
+O  conjunto  de validação  contempla  a  temporada  2017 na  qual  o
+vencedor totalizou  2460.19 pontos  com uma média  de 67.4  pontos. A
+\rtab{experiments_validation}  contém as  métricas avalidas  em cada
+modelo com  os melhores  parâmetros explorados.  O modelo  com melhor
+desempenho  e menor  variação foi  a regressão  linear de  Bayesian
+Ridge,  com uma  média  de 55.79  pontos,  levando em  consideração
+apenas da  rodada 6  até 38.  Outro fator que  pode ter  impactado no
+resultado  abaixo do  campeão  foi  a não  inclusão  do técnico  e
+capitão.
+
+\begin{table}[h]
+\caption[]{Experimentos de Validação}
+\label{tab:experiments_validation}
+\begin{tabular}{l|ccccc}
+
+Modelo & Score & Média & \sigma & Total de Pontos \\
+
+\hline
+
+Redes Neurais     & -19.25 & 49.37 & 15.25 & 1629.20  \\
+Random Forest     &  -0.03 & 35.75 & 16.72 & 1179.90  \\
+Bayesian Ridge    &   0.01 & 55.79 & 14.59 & 1841.29  \\
+Ridge             & NaN    & 52.59 & 18.27 & 1735.69  \\
+ElasticNet        & NaN    & 55.35 & 15.71 & 1826.70  \\
+Gradient Boosting &  -0.01 & 39.15 & 19.14 & 1291.80  \\
+SVR               &  -0.17 & 30.88 & 17.75 & 1019.00
+
+\end{tabular}
+\end{table}
+
+A \rfig{bar_round}  complementa os resultados da  tabela, mostrando os
+pontos  obtidos por  cada modelo  para  cada rodada  comparando com  o
+campeão  da temporada.  O campeão,  com  a cor  azul, acaba  ganhado
+praticamente todas as rodadas quando  comparado com os outros modelos,
+ocorrendo apenas alguns  casos esporádicos de resultado  ruim como na
+rodada 10 e  30. O modelo do Bayesian Ridge  mantém um equilíbrio ao
+longo  das rodadas  sempre  próximo  dos outros  modelos  e quando  o
+resultado obtido a perda é moderada.
 
 \subsection{Conjunto de Teste}
 
+O  conjunto  de teste  compreende  o  Campeonato Brasileiro  de  2018,
+finalizado no dia 02 de dezembro, no qual houve a participação de 20
+times e um total de 38  rodadas. O campeão dessa temporada do Cartola
+FC foi  Mateus Gomes Soares  com o  time Flajuveteus FC,  acumulando o
+total de 3288.15 pontos com uma média de 86.53 pontos por rodada.
+
+TODO(ciroceissler): nossa media pontuação.
+
+TODO(ciroceissler): comparar rodada a rodada.
+
 \section{Conclusão}
+
+Neste projeto, criamos um modelo para prever a melhor escalação para
+cada rodada do \tit{fantasy game}  Cartola FC. Diversas técnicas para
+modelar o  problema foram analisadas,  testando a eficiência  de cada
+modelo. O teste  utilizou a temporada de 2014 a  2016 como conjunto de
+treinamento e a temporada de  2017 como validação. Ao final, optamos
+por utilizar o Bayesian Ridge por causa do melhor desempenho comparado
+aos  demais modelos  e  testamos  com a  última  temporada 2018,  que
+finalizou no dia 02 de novembro.
+
+TODO(ciroceissler): o resultado final foi.
+
+TODO(ciroceissler): analise superficial dos dados.
+
+\begin{figure*}[H]
+  \vspace{-0.5cm}
+  \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_1.png}
+  \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_2.png}
+  \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_3.png}
+  \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_4.png}
+  \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_5.png}
+  \includegraphics[width=\textwidth]{images/bar_6.png}
+  \caption{Experimentos Temporada 2017 - Pontuação por Rodada para cada Modelo}
+  \label{fig:bar_round}
+\end{figure*}
+
+\pagebreak
 
 \nocite{*}
 \bibliographystyle{IEEEtran}

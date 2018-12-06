@@ -6,6 +6,7 @@ import time
 import random
 import argparse
 import warnings
+import statistics
 
 import numpy as np
 import pandas as pd
@@ -255,15 +256,21 @@ class Cartola:
 
             model.fit(samples, scores)
 
+            print(model.best_params_, model.best_score_)
+
+            pd.DataFrame(model.best_estimator_.named_steps['NN'].loss_curve_).plot()
+
         elif type == "RandomForest":
             samples = scaler.fit_transform(samples)
 
-            n_estimators = [100]
+            n_estimators = [1000, 100, 10]
             param_grid = {'n_estimators': n_estimators}
 
             model = GridSearchCV(RandomForestRegressor(max_depth=500), param_grid, cv=5)
 
             model.fit(samples, scores)
+
+            print(model.best_params_, model.best_score_)
 
         elif type == "BayesianRidge":
             samples = scaler.fit_transform(samples)
@@ -279,6 +286,8 @@ class Cartola:
 
             model.fit(samples, scores)
 
+            print(model.best_params_, model.best_score_)
+
         elif type == "Ridge":
             model = RidgeCV().fit(samples, scores)
 
@@ -290,26 +299,26 @@ class Cartola:
             model = ElasticNetCV().fit(samples, scores)
 
         elif type == "GradientBoost":
-            n_estimators = [50]
-            learning_rate = [0.1]
+            n_estimators = [100, 50, 10]
+            learning_rate = [0.1, 0.2, 0.3]
             param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
 
             model = GridSearchCV(GradientBoostingRegressor(max_depth=3), param_grid, cv=5)
 
             model.fit(samples, scores)
 
-        elif type == "SVR":
-            n_estimators = [50]
-            learning_rate = [0.1]
-            param_grid = {'n_estimators': n_estimators, 'learning_rate': learning_rate}
+            print(model.best_params_, model.best_score_)
 
-            C  = [50]
-            gamma = [0.3]
+        elif type == "SVR":
+            C  = [100, 50, 10]
+            gamma = [0.1, 0.2, 0.3]
             param_grid = {'C': C, 'gamma': gamma}
 
             model = GridSearchCV(SVR(), param_grid, cv=5)
 
             model.fit(samples, scores)
+
+            print(model.best_params_, model.best_score_)
 
         if save == True:
             pkl.dump(model, open('src/data/model.pkl', 'wb'), -1)
@@ -322,7 +331,8 @@ class Cartola:
 
         cols_info = ['Rodada', 'ano']
 
-        total_points = 0
+        list_points = []
+
         total_rounds = 0
 
         if load == True:
@@ -351,13 +361,15 @@ class Cartola:
 
             points = df.loc[df['Apelido'].isin(array)]['Pontos'].sum()
 
-            total_points += points
-            total_rounds +=1
+            list_points.append(points)
+
+            total_rounds = total_rounds + 1
 
             print('round #', total_rounds + 5, ' : ', points)
 
-        print('\ntotal points: ', total_points)
-        print('mean  points: ', total_points/total_rounds)
+        print('\ntotal points: ', sum(list_points))
+        print('mean  points: ', sum(list_points)/total_rounds)
+        print('stdev points: ', statistics.stdev(list_points))
 
 if __name__ == '__main__':
 

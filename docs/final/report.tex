@@ -417,11 +417,21 @@ analisados anteriormente esse baixo desempenho já era esperado.
 
 \subsection{Regressão Linear: Ridge}
 
-A regressão linear de Ridge, chamada também regularização de Tikhonov,
+A  regressão linear  de  Ridge \cite{tikhonov2013numerical},  chamada
+também regularização  de Tikhonov,  com o termo  de regularização
+$\alpha\frac{1}{2}\sum_{i=1}^{n}  \theta_i^{2}$ a  função de  custo,
+mantendo o peso o menor possível. O hiperparâmetro $\alpha$ controla
+quanto o termo  deve influenciar. Se for zero, reduzimos  o problema a
+uma  regressão linear  e, caso  seja um  valor muito  alto, os  pesos
+tendem a ir para zero. Abaixo, temos a equação da função de custo:
 
 \begin{equation}
   J(\theta)=MSE(\theta) + \alpha\frac{1}{2}\sum_{i=1}^{n} \theta_i^{2}
 \end{equation}
+
+A  execução  do  modelo  é  feita de  maneira  bem  simples  com  o
+\ttt{sklearn}  e  a   classe  \ttt{RidgeCV}  que  realiza   o  uso  de
+cross-validação para realizar o treinamento.
 
 \subsection{Regressão Linear: Bayesian Ridge}
 
@@ -434,11 +444,11 @@ final será proporcional a essa distribuição conforme a equação:
   y \sim \mathcal{N}(\theta^{T}X,\,\sigma^{2}I)
 \end{equation}
 
-O  objetivo dessa  regressão não  é  determinar o  melhor valor  de
-parâmetro do  modelo, mas sim determinar  um distribuição posterior
-para  os parâmetros  do  modelos.  Além da  resposta  do modelo  ser
-proviniente da distribuição de probabilidade, os parâmetros também
-são oriundos dessa distribuição.
+O  objetivo dessa  regressão não  é determinar  o melhor  valor dos
+parâmetros do modelo, mas  sim determinar um distribuição posterior
+para esses parâmetros. Além da resposta do modelo ser proviniente da
+distribuição de probabilidade, os  parâmetros também são oriundos
+dessa distribuição.
 
 \begin{table}[h]
 \centering

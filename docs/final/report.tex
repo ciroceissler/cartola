@@ -152,26 +152,52 @@ para o torneio de 2018.
 
 \section{Trabalhos Relacionados}
 
-TODO(ciroceissler): football
-\cite{sugar2015predicting}
-\cite{porter2018predictive}
-\cite{lutz2015fantasy}
-\cite{dolan2015machine}
-\cite{becker2016analytical}
+A   predição   de   resultados   em   esportes,   seja   apenas   de
+um   jogo  em   si   ou   do  desempenho   de   alguma  jogador   não
+é   algo    novo,   principalmente    ao   realizar    buscar   sobre
+futebol  americano  como  podemos  ver  em  \cite{sugar2015predicting}
+\cite{porter2018predictive}                     \cite{lutz2015fantasy}
+\cite{dolan2015machine}    \cite{becker2016analytical}.   Apesar    de
+características comum entre os esportes, as técnicas de \tit{machine
+learning} podem ser  utilizadas com ponto de partida  mas o tratamento
+dos dados devem ser específicos para o futebol brasileiro.
 
-Em  \cite{viscondiaplicaccao},  um   sistema  de  previsão  aplicando
-técnicas  de \tit{machine  learning}  foi proposto  para conseguir  a
-melhor escalação do time a  em cada rodada, entretanto os resultados
-obtidos não permitiria  vencer o torneio. Além  disso, este trabalho
-fez uma análise  dos dados, explanando algumas  observações como: o
-esquema  tático tem  uma  leve  variação, sendo  o  4-4-2 a  melhor
-formação.
+Em \cite{schmidt2017uso},  Schmidt desenvolveu um sistema  para prever
+resultados do campeonanto de futebol inglês, usando dados de partidas
+de campeonatos  anteriores além  de informações  sobre os  clubes e
+jogadores do  jogo FIFA.  Ele aplicou as  técnicas de  Redes Neurais,
+Random  Forest e  SVM (Support  Vector Machine),  obtendo uma  taxa de
+58.77\% de acertos na previsão dos jogos posteriores.
+Entretanto, esse trabalho limita-se apenas ao resultado das partidas.
 
-\cite{schmidt2017uso}
+No caso  do futebol brasileiro, temos  em \cite{viscondiaplicaccao} um
+sistema de previsão aplicando técnicas de \tit{machine learning} foi
+proposto para conseguir a melhor escalação do time a em cada rodada,
+entretanto  os resultados  obtidos não  permitiria vencer  o torneio.
+Além  disso, este  trabalho fez  uma análise  dos dados,  explanando
+algumas observações como: o esquema tático tem uma leve variação,
+sendo o 4-4-2 a melhor formação.
 
-\cite{mota2018cartola}
+% \cite{mota2018cartola}
 
-\cite{gomide2018} \cite{git_cartola}
+O  trabalho final  de conclusão  \cite{henrique2018tcc} apresenta  os
+passos  trilhados para  sua aplicação  de Machine  Learning sobre  o
+Cartola FC. O autor apresenta seu tratamento de base de dados e aplica
+validação cruzada com XGBoost, chegando  a um resultado médio de 55
+pontos por  rodada, incluindo  todos os  jogadores. Acreditamos  que a
+diferença esteja no mais completo tratamento de dados que realizamos,
+que filtrou  mais dados,  permitindo que,  mesmo que  não fizéssemos
+análises macros sobre o jogo, tivéssemos melhores resultados.
+
+O trabalho  \cite{gomide2018} apresenta  uma estratégia  diferente de
+abordar o resultado. Nela, o autor analisa também performance do time
+como  um todo  a  qual o  jogador  se encontra,  e  qual seu  próximo
+adversário, local  da partida,  entre outros.  Essa é  uma abordagem
+interessante e que poderia vir a  acrescentar pontos na nossa media de
+resultado  em um  próximo trabalho.O  trabalho dos  alunos da  Escola
+Politecnica da  USP conseguiu  chegar a um  resultado médio  de 61,13
+pontos  com o  XGBoost. Resultado  próximo ao  que acreditamos  ser o
+nosso ao adicionar o técnico.
 
 \section{Base de Dados}
 
@@ -589,21 +615,6 @@ TODO(ciroceissler): nossa media pontuação.
 
 TODO(ciroceissler): comparar rodada a rodada.
 
-\section{Conclusão}
-
-Neste projeto, criamos um modelo para prever a melhor escalação para
-cada rodada do \tit{fantasy game}  Cartola FC. Diversas técnicas para
-modelar o  problema foram analisadas,  testando a eficiência  de cada
-modelo. O teste  utilizou a temporada de 2014 a  2016 como conjunto de
-treinamento e a temporada de  2017 como validação. Ao final, optamos
-por utilizar o Bayesian Ridge por causa do melhor desempenho comparado
-aos  demais modelos  e  testamos  com a  última  temporada 2018,  que
-finalizou no dia 02 de novembro.
-
-TODO(ciroceissler): o resultado final foi.
-
-TODO(ciroceissler): analise superficial dos dados.
-
 \begin{figure*}[H]
   \vspace{-0.5cm}
   \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_1.png}
@@ -615,6 +626,44 @@ TODO(ciroceissler): analise superficial dos dados.
   \caption{Experimentos Temporada 2017 - Pontuação por Rodada para cada Modelo}
   \label{fig:bar_round}
 \end{figure*}
+
+\section{Conclusão}
+
+Neste projeto, criamos um modelo para prever a melhor escalação para
+cada rodada do \tit{fantasy game}  Cartola FC. Diversas técnicas para
+modelar o  problema foram analisadas,  testando a eficiência  de cada
+modelo. O teste  utilizou a temporada de 2014 a  2016 como conjunto de
+treinamento e a temporada de  2017 como validação. Ao final, optamos
+por utilizar o Bayesian Ridge por causa do melhor desempenho comparado
+aos  demais modelos  e  testamos  com a  última  temporada 2018,  que
+finalizou no dia 02 de novembro.
+
+Embora  os  resultados  da  predição da  pontuação  dos  jogadores
+realizada pelos nossos modelos não tenha sido muito boa, o desempenho
+geral  quando usamos  nosso modelo  para simular  a execução  de uma
+temporada se  mostrou muito bom. Isso  deve-se ao fato de  que para um
+participante do cartola pontue bem,  ele não precisa saber exatamente
+quanto um  jogador vai pontuar, e  sim os jogadores que  irão pontuar
+mais, e esse comportamento, nosso modelo conseguiu aprender de maneira
+razoável.
+
+A  nossa  conclusão para  o  desempenho  dos  modelos é  a  natureza
+aleatória do  problema. Chegamos a  mesma, observando os  fatores que
+influenciam no  futebol como:  Mais jogadores  do que  outros esportes
+(o  que  diminui  a  participação de  jogadores  acima  da  média),
+condições de jogo  (clima e estado do gramado),  possíveis erros de
+arbitragem (VAR ainda não adotado  pelo brasileirão), sem pedidos de
+tempo (\textit{timeouts}). O  basquete por exemplo, é  um esporte com
+número reduzido de jogadores, e por essa causa, é possível perceber
+claramente  em números,  o  peso de  grandes  jogadores como  Michael
+Jordan,  LeBron James  e outros  na NBA.  Além disso,  é um  esporte
+praticado em uma  quadra fechada, com cuidados  especiais em relação
+ao ambiente, a sua arbitragem pode consultar vídeo e os técnicos tem
+direito  à  pedidos  de  tempo.  Todos  essas  variáveis  ajudam  na
+previsibilidade desse  esporte. Já  no futebol,  como vimos  antes, o
+cenário é bem diferente. E o nosso trabalho é uma evidência para o
+fato de que no esporte mais amado e conhecido em todo mundo, tudo pode
+acontecer.
 
 \pagebreak
 

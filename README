@@ -1,4 +1,23 @@
 README
 ======
 
+“Desmistificando o  Cartola FC”  é o  trabalho final  dos autores
+para a disciplina MC886/MO444 (Machine Learning) na Unicamp. A escolha
+do tema se deu pela afinidade do  grupo com o jogo e esporte, trazendo
+para nosso  dia-a-dia mais  direto uma  aplicação de  aprendizado de
+máquina. Trabalhamos  com baselines  desenvolvidos por  brasileiros e
+disponibilidades no Github. A disponibilização de dados pela empresa
+que administra  o jogo  facilitou a  captura do  banco de  dados, onde
+pudemos desenvolver técnicas diferentes  de limpeza e tratamento. Com
+o passar  da disciplina  e novas técnicas  de Machine  Learning serem
+apresentadas, aumentamos  o número  de aplicações de  ML diferentes
+para  resolver o  problema. Apresentaremos  para o  leitor dados  mais
+gerais  sobre  cada  uma  delas no  relatório  que  segue.  Obtivemos
+resultado,  em  pontos  do  jogo,  de  55,6  com  nossas  predições,
+número esse desconsiderando  o técnico do time, que  caso seguisse a
+média  obtida  com  os  jogadores  faria  com  quem  chegássemos  em
+aproximadamente  61  pontos.  A  efeito de  comparação,  o  campeão
+nacional  do  ano  passado  teve média  de  66  pontos.  Consideramos
+positivo nosso resultado e aprendizado ao longo do projeto.
+
 % taf!

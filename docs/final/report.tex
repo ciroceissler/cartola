@@ -419,23 +419,61 @@ analisados anteriormente esse baixo desempenho já era esperado.
 
 A regressão linear de Ridge, chamada também regularização de Tikhonov,
 
-% J(w)=\lambda\norm{w}^2 + \sum_i (w^T x_i - y_i)^2.
 \begin{equation}
   J(\theta)=MSE(\theta) + \alpha\frac{1}{2}\sum_{i=1}^{n} \theta_i^{2}
 \end{equation}
 
 \subsection{Regressão Linear: Bayesian Ridge}
 
-% TODO(ciroceissler: parameters
-%
-% alpha_1  = [1e-7, 1e-6, 1e-5]
-% alpha_2  = [1e-7, 1e-6, 1e-5]
-% lambda_1 = [1e-7, 1e-6, 1e-5]
-% lambda_2 = [1e-7, 1e-6, 1e-5]
+A  regressão de  Bayesian Ridge  \cite{mackay1992bayesian} utiliza  a
+distribuição de  propabilidade normal para calcular  a reposta sendo
+caracterizado pela média  e variância dos dados, ou  seja, seu valor
+final será proporcional a essa distribuição conforme a equação:
+
+\begin{equation}
+  y \sim \mathcal{N}(\theta^{T}X,\,\sigma^{2}I)
+\end{equation}
+
+O  objetivo dessa  regressão não  é  determinar o  melhor valor  de
+parâmetro do  modelo, mas sim determinar  um distribuição posterior
+para  os parâmetros  do  modelos.  Além da  resposta  do modelo  ser
+proviniente da distribuição de probabilidade, os parâmetros também
+são oriundos dessa distribuição.
+
+\begin{table}[h]
+\centering
+\caption[]{Melhor Ajuste para o Modelo Bayesian Ridge}
+\label{tab:parameters_bayesian_ridge}
+\begin{tabular}{c|c}
+
+Parâmetro & Valor \\
+
+\hline
+
+$\alpha_1$  & $1^{-7}$ \\
+$\alpha_2$  & $1^{-5}$ \\
+$\lambda_1$ & $1^{-5}$ \\
+$\lambda_2$ & $1^{-7}
+
+\end{tabular}
+\end{table}
+
+
+O modelo possui 4 parâmetros para  fazer o ajuste da regressão, eles
+são: $\alpha_1$, $\alpha_2$, $\lambda_1$ e  $\lambda_2$. Com o uso da
+função  \ttt{GridSearchCV}, fazemos  uma  combinação  de todos  os
+valores definidos para cada parâmetro,  que são $1^{-7}$, $1^{-6}$ e
+$1^{-5}$. Ao final  da execução e explorar  todas as possibilidades,
+chega-se   ao   melhor   ajuste,  melhor   \tit{score},   conforme   a
+\rtab{parameters_bayesian_ridge}.
 
 \subsection{Regressão Linear: ElasticNet}
 
 \cite{zou2005regularization}
+
+\begin{equation}
+  J(\theta)=MSE(\theta) + r\alpha\frac{1}{2}\sum_{i=1}^{n} |\theta_i| + \frac{1 - r}{2}\alpha\sum_{i=1}^{n} \theta_i^{2}
+\end{equation}
 
 \subsection{Regressão Linear: Gradient Boosting}
 

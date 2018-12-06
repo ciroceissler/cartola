@@ -415,6 +415,20 @@ analisados anteriormente esse baixo desempenho já era esperado.
 
 \subsection{Regressão Linear: Random Forest}
 
+A regressão  linear Random  Forest \cite{ho1995random} usa  o método
+ensemble para combinar  o resultado de diversos  estimadores base para
+aumentar  robustez e  generalização quando  comparado com  apenas um
+estimador. O  Random Forest usa  um meta-estimador, que  consiste numa
+árvore  de decisão,  e usa  média para  incrementar o  resultado da
+predição assim como reduzir a possibilidade overfitting.
+
+No treinamento do modelo,  usamos a classe \ttt{RandomForestRegressor}
+do  \ttt{sklearn} com  profundidade  de no  máximo  500, além  disso
+usamos  \ttt{GridSearchCV}  para  explorar  o uso  de  uma  quantidade
+diferente de  estimadores, variando o  valor entre  10, 100 e  1000, e
+obtivemos o  melhor resultado  com esse parâmetro  com valor  igual a
+1000.
+
 \subsection{Regressão Linear: Ridge}
 
 A  regressão linear  de  Ridge \cite{tikhonov2013numerical},  chamada
@@ -477,13 +491,22 @@ $1^{-5}$. Ao final  da execução e explorar  todas as possibilidades,
 chega-se   ao   melhor   ajuste,  melhor   \tit{score},   conforme   a
 \rtab{parameters_bayesian_ridge}.
 
-\subsection{Regressão Linear: ElasticNet}
+\subsection{Regressão Linear: Elastic Net}
 
-\cite{zou2005regularization}
+A regressão  linear Elastic  Net \cite{zou2005regularization}  é uma
+combinação de  duas regressões, Ridge  e Lasso, com  uma variável,
+\tit{r}, para controlar a relação  entre as duas. Casos \tit{r} seja
+igual  a  um, a  função  de  custo se  reduz  a  de Ridge,  mostrada
+anteriormente, e  se for igual a  zero, o comportamento será  igual a
+regressão  linear de  Lasso.
 
 \begin{equation}
   J(\theta)=MSE(\theta) + r\alpha\frac{1}{2}\sum_{i=1}^{n} |\theta_i| + \frac{1 - r}{2}\alpha\sum_{i=1}^{n} \theta_i^{2}
 \end{equation}
+
+A equação acima mostra a nova função de custo, na qual interage as
+duas regressões.
+
 
 \subsection{Regressão Linear: Gradient Boosting}
 

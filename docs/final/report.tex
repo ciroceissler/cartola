@@ -498,19 +498,39 @@ combinação de  duas regressões, Ridge  e Lasso, com  uma variável,
 \tit{r}, para controlar a relação  entre as duas. Casos \tit{r} seja
 igual  a  um, a  função  de  custo se  reduz  a  de Ridge,  mostrada
 anteriormente, e  se for igual a  zero, o comportamento será  igual a
-regressão  linear de  Lasso.
+regressão linear de Lasso. A  equação abaixo mostra a nova função
+de custo, na qual interage as duas regressões.
 
 \begin{equation}
   J(\theta)=MSE(\theta) + r\alpha\frac{1}{2}\sum_{i=1}^{n} |\theta_i| + \frac{1 - r}{2}\alpha\sum_{i=1}^{n} \theta_i^{2}
 \end{equation}
 
-A equação acima mostra a nova função de custo, na qual interage as
-duas regressões.
-
+A   execução  foi   feita   com  a   classe  \ttt{ElasticNetCV}   do
+\ttt{sklearn}   e  da   mesma  forma   que  o   modelo  Ridge   usamos
+cross-validação.
 
 \subsection{Regressão Linear: Gradient Boosting}
 
+O  Gradient  Boosting  \cite{breiman1997arcing} é  uma  técnica  que
+produz  um  modelo   de  predição  baseado  em   ensemble,  no  qual
+adiciona preditores  para corrigir o  seu antecessor. Para  definir os
+melhores parâmetros,  variamos o número  de estimadores e a  taxa de
+aprendizado.  Seguimos  usamos  a  mesma função  de  outros  modelos
+anteriores, como  Bayesian Ridge,  a \ttt{GridSearchCV} para  testar a
+combinação  de todas  as opções  fornecidas. Os  estimadores varia
+entre 100, 50 e  10; já a taxa de aprendizado  varia entre os valores
+0.1, 0.2 e 0.3. Os melhores parâmetros  para o modelo foi uma taxa de
+aprendizado de 0.1 com 10 estimadores.
+
 \subsection{Regressão Linear: SVR (Support Vector Regression)}
+
+O SVR é uma extensão de uma versão do SVM (Support Vector Machine),
+usado para classificação, para resolver  o problema de regressão. O
+SVR de  maneira similar  a técnica discutida  anteriormente, testamos
+os  parâmetros, \tit{C}  e  $\gamma$, para  encotrar  os que  possuem
+melhor resultado  para o nosso  problema. Após a execução  usando a
+\ttt{GridSearchCV},  obtemos  o  valor  10 para  \tit{C}  e  0.1  para
+$\gamma$.
 
 \section{Resultados}
 

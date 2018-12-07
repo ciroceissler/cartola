@@ -224,7 +224,7 @@ class Cartola:
         if load == True:
             df_samples = pd.read_csv('src/data/data_samples.csv')
 
-        df_samples = df_samples[df_samples.ano != 2017]
+        df_samples = df_samples[df_samples.ano < 2017]
 
         # modificação para treinar com mais de uma temporada
         df_samples['ano_rodada'] = df_samples['Rodada'] + df_samples['ano']*100
@@ -388,5 +388,9 @@ if __name__ == '__main__':
         model = cartola.train(type, data_samples)
 
         cartola.play(data_clean, model, 2017) # play 2017 season
+
+    final_model = cartola.train(["BayesianRidge"], data_samples)
+
+    cartola.play(data_clean, final_model, 2018) # play 2018 season
 
 # taf!

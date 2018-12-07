@@ -543,24 +543,30 @@ entre 100, 50 e  10; já a taxa de aprendizado  varia entre os valores
 0.1, 0.2 e 0.3. Os melhores parâmetros  para o modelo foi uma taxa de
 aprendizado de 0.1 com 10 estimadores.
 
-\subsection{Regressão Linear: SVR (Support Vector Regression)}
+\subsection{Regressão Linear: Support Vector Regression (SVR)}
 
-O SVR é uma extensão de uma versão do SVM (Support Vector Machine),
-usado para classificação, para resolver  o problema de regressão. O
-SVR de  maneira similar  a técnica discutida  anteriormente, testamos
-os  parâmetros, \tit{C}  e  $\gamma$, para  encotrar  os que  possuem
-melhor resultado  para o nosso  problema. Após a execução  usando a
-\ttt{GridSearchCV},  obtemos  o  valor  10 para  \tit{C}  e  0.1  para
-$\gamma$.
+O  Support  Vector   Machine  (SVM)  é  uma   técnica  versátil  de
+aprendizado  supervisionado para  conseguir realizar  classificação,
+regressão  e   detectar  \tit{outliers},   ela  cria   um  hiperplano
+maximizando  a distância  entre dois  pontos mais  próximos de  duas
+classes.  O SVR  é uma  extensão de  uma versão  do Support  Vector
+Machine (SVM),  usado para  classificação, para resolver  o problema
+de  regressão.  O  SVR  de   maneira  similar  a  técnica  discutida
+anteriormente,  testamos  os  parâmetros, \tit{C}  e  $\gamma$,  para
+encotrar os que possuem melhor  resultado para o nosso problema. Após
+a  execução usando  a \ttt{GridSearchCV},  obtemos o  valor 10  para
+\tit{C} e 0.1 para $\gamma$.
 
 \section{Resultados}
 
-Os modelos descritos  na seção anterior foram todos  validados com o
-conjunto de treinamento,  após tratamento dos dados,  e compreende os
-anos de  2014 até 2016.  Os dados do  campeonato de 2017  foi tratado
-como o  conjunto de validação,  ou seja, utiliza-se para  comparar a
+Nesta seção,  iremos descrever os  resultados obtidos ao  executar o
+nosso  problema com  o conjunto  de validação  e testes.  Os modelos
+descritos na seção anterior foram  todos validados com o conjunto de
+treinamento, após  o tratamento  dos dados, e  compreende os  anos de
+2014  até 2016.  Os  dados do  campeonato de  2017  foi tratado  como
+o  conjunto  de  validação,  ou seja,  utiliza-se  para  comparar  a
 performance do modelo e definir qual será escolhido para a fase final
-dos experimentos.
+dos experimentos com a temporada de 2018.
 
 \subsection{Conjunto de Validação}
 
@@ -603,14 +609,6 @@ rodada 10 e  30. O modelo do Bayesian Ridge  mantém um equilíbrio ao
 longo  das rodadas  sempre  próximo  dos outros  modelos  e quando  o
 resultado obtido a perda é moderada.
 
-\subsection{Conjunto de Teste}
-
-O  conjunto  de teste  compreende  o  Campeonato Brasileiro  de  2018,
-finalizado no dia 02 de dezembro, no qual houve a participação de 20
-times e um total de 38  rodadas. O campeão dessa temporada do Cartola
-FC foi  Mateus Gomes Soares  com o  time Flajuveteus FC,  acumulando o
-total de 3288.15 pontos com uma média de 86.53 pontos por rodada.
-
 \begin{figure*}[H]
   \vspace{-0.5cm}
   \includegraphics[trim={0 1.3cm 0 0}, clip, width=\textwidth]{images/bar_1.png}
@@ -625,7 +623,24 @@ total de 3288.15 pontos com uma média de 86.53 pontos por rodada.
 
 \pagebreak
 
-No nosso caso
+\subsection{Conjunto de Teste}
+
+O  conjunto  de teste  compreende  o  Campeonato Brasileiro  de  2018,
+finalizado no dia 02 de dezembro, no qual houve a participação de 20
+times e um total de 38  rodadas. O campeão dessa temporada do Cartola
+FC foi  Mateus Gomes Soares  com o  time Flajuveteus FC,  acumulando o
+total de 3288.15 pontos com uma média de 86.53 pontos por rodada.
+
+Infelizmente,  não conseguimos  preparar  os dados  para realizar  os
+testes com a temporada 2018.  O repositório \cite{git_cartola} com os
+dados da  última rodada  apenas foram disponibilizados  no dia  04 de
+dezembro  e tinha  uma  fase de  pré-processamento  para calcular  as
+médias  de  diversos  parâmetros  como  pontos  do  jogador,  faltas
+sofridas,  passes  errados,  assistências, finalizações  na  trave,
+entre outros. Chegamos inclusive a iniciar o desenvolvimento do parser
+para conseguir criar o  parser, entretanto nossa implementação ficou
+com o custo  computacional muito alto e não finalizou  antes do prazo
+final.
 
 \section{Conclusão}
 
@@ -635,8 +650,8 @@ modelar o  problema foram analisadas,  testando a eficiência  de cada
 modelo. O teste  utilizou a temporada de 2014 a  2016 como conjunto de
 treinamento e a temporada de  2017 como validação. Ao final, optamos
 por utilizar o Bayesian Ridge por causa do melhor desempenho comparado
-aos  demais modelos  e  testamos  com a  última  temporada 2018,  que
-finalizou no dia 02 de novembro.
+aos demais modelos  e planejamos testar com a  última temporada 2018,
+que finalizou no dia 02 de novembro, porém não conseguimos.
 
 Embora  os  resultados  da  predição da  pontuação  dos  jogadores
 realizada pelos nossos modelos não tenha sido muito boa, o desempenho

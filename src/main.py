@@ -389,8 +389,8 @@ if __name__ == '__main__':
 
         cartola.play(data_clean, model, 2017) # play 2017 season
 
-    final_model = cartola.train(["BayesianRidge"], data_samples)
+    final_model = cartola.train("BayesianRidge", data_samples)
 
-    cartola.play(data_clean, final_model, 2018) # play 2018 season
+    cartola.play(data_clean, final_model, 2018, True) # play 2018 season
 
 # taf!
